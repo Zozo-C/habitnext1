@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Calendar, Award, Plus, X, BookOpen, BarChart3 } from 'lucide-react';
+import { Calendar, X, BookOpen } from 'lucide-react';
 import { getTodayStr } from '@/lib/utils';
 import Avatar from './Avatar';
 
@@ -124,71 +124,54 @@ const AppHeader = ({
         return `${m}/${day} (${wd})`;
     }, [selectedDate]);
 
-    return (
-        <div className={`bg-white sticky top-0 z-30 shadow-sm ${className || ''}`}>
-            <div className="flex items-center justify-between px-4 py-3">
-                <button
-                    onClick={onOpenProfile || (() => onViewChange('daily'))}
-                    className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-                    aria-label="開啟個人資料"
-                >
-                    <Avatar user={user} size="w-8 h-8" />
-                    <span className="font-bold text-gray-800 text-sm md:text-base">{user?.nickname || user?.name || '訪客'}</span>
-                </button>
+    const greeting = (() => {
+        const h = new Date().getHours();
+        if (h >= 5 && h < 12) return '早安';
+        if (h < 18) return '午安';
+        return '晚安';
+    })();
 
-                {currentView === 'daily' ? (
-                    // Date label hidden on mobile — the week strip below already
-                    // shows the current day. Reflects the actual selectedDate.
-                    <div className="hidden sm:flex items-center gap-2">
-                        <Calendar size={18} className="text-gray-600" />
-                        <span className="font-bold text-gray-800 text-sm md:text-base">{headerDateLabel}</span>
+    return (
+        <div className={`bg-white sticky top-0 z-30 border-b border-[#D1D4D9] ${className || ''}`}>
+            {currentView === 'daily' ? (
+                <div className="px-4 pt-5 pb-3">
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">{greeting}</p>
+                        <button
+                            onClick={onOpenProfile || (() => onViewChange('daily'))}
+                            className="hover:opacity-70 active:opacity-50 transition-opacity"
+                            aria-label="開啟個人資料"
+                        >
+                            <Avatar user={user} size="w-8 h-8" />
+                        </button>
                     </div>
-                ) : (
-                    <span className="font-bold text-emerald-600">
-                        {currentView === 'manage' ? '任務管理'
+                    <p className="text-2xl font-bold text-[#1A1A1A]">{user?.nickname || '訪客'}</p>
+                </div>
+            ) : (
+                <div className="flex items-center justify-between px-4 py-3">
+                    <button
+                        onClick={onOpenProfile || (() => onViewChange('daily'))}
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80 active:opacity-60 transition-opacity"
+                        aria-label="開啟個人資料"
+                    >
+                        <Avatar user={user} size="w-8 h-8" />
+                        <span className="font-medium text-[#374151] text-sm max-w-[100px] truncate">{user?.nickname || '訪客'}</span>
+                    </button>
+                    <span className="font-bold text-[#004F51] text-sm">
+                        {currentView === 'manage' ? '計畫總覽'
                             : currentView === 'dashboard_detail' ? '洞察報告'
                             : currentView === 'stats' ? '統計'
                             : '成就中心'}
                     </span>
-                )}
-
-                <div className="flex gap-2">
-                    {currentView === 'daily' && (
-                        <>
-                            <button onClick={onOpenExplore} className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-100 transition-colors">
-                                <BookOpen size={20} />
+                    <div className="flex gap-1">
+                        {currentView === 'dashboard_detail' && (
+                            <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-[#F2F2F2] text-[#374151] rounded-lg flex items-center justify-center hover:bg-[#D1D4D9] transition-colors duration-200">
+                                <X size={16} />
                             </button>
-                            <button onClick={() => onViewChange('dashboard_detail')} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-colors">
-                                <Calendar size={20} />
-                            </button>
-                            <button onClick={() => onViewChange('stats')} className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center hover:bg-purple-100 transition-colors">
-                                <BarChart3 size={20} />
-                            </button>
-                            <button onClick={onOpenBadges} className="w-8 h-8 bg-gray-100 text-yellow-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
-                                <Award size={20} />
-                            </button>
-                            <button onClick={onOpenAddFlow} className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors">
-                                <Plus size={20} />
-                            </button>
-                        </>
-                    )}
-                    {(currentView !== 'daily' && currentView !== 'dashboard_detail') && (
-                        <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors">
-                            <Calendar size={20} />
-                        </button>
-                    )}
-                    {currentView === 'dashboard_detail' && (
-                        <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
-                            <X size={20} />
-                        </button>
-                    )}
-                    {currentView === 'manage' && (
-                        <button onClick={onOpenAddFlow} className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white hover:bg-gray-700 transition-colors">
-                            <Plus size={20} />
-                        </button>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Interactive Week Strip — tap any day to view its tasks; swipe
                 left/right on the strip to shift the displayed week ±7 days.
@@ -212,20 +195,20 @@ const AppHeader = ({
                                     if (swipedRef.current) return;
                                     onSelectDate?.(cell.dateStr);
                                 }}
-                                className={`flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-6 cursor-pointer relative transition-colors ${
+                                className={`flex-1 flex flex-col items-center justify-center py-2 px-1 cursor-pointer relative transition-colors duration-200 ${
                                     isSelected
-                                        ? 'text-emerald-600 font-bold'
+                                        ? 'text-[#169E6B] font-bold'
                                         : cell.isToday
-                                            ? 'text-gray-700 font-medium hover:text-emerald-500'
-                                            : 'text-gray-400 font-medium hover:text-gray-600'
+                                            ? 'text-[#374151] font-medium'
+                                            : 'text-[#9CA3AF] font-medium hover:text-[#374151]'
                                 }`}
                             >
                                 <span className="text-[11px] leading-none">{cell.label}</span>
                                 <span className="text-sm leading-tight mt-0.5">{cell.dayNum}</span>
                                 {cell.isToday && !isSelected && (
-                                    <span className="absolute top-0.5 right-1/2 translate-x-3 w-1 h-1 bg-emerald-500 rounded-full" />
+                                    <span className="absolute top-0.5 right-1/2 translate-x-3 w-1 h-1 bg-brand-green rounded-full" />
                                 )}
-                                {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-emerald-500 rounded-t-full" />}
+                                {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-brand-green rounded-t-full" />}
                             </button>
                         );
                     })}

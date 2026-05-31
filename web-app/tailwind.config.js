@@ -7,6 +7,20 @@ module.exports = {
     ],
     theme: {
         extend: {
+            colors: {
+                brand: {
+                    green: '#169E6B',
+                    'green-hover': '#128E5F',
+                    'green-active': '#0F7750',
+                    dark: '#004F51',
+                    'dark-hover': '#004749',
+                },
+                surface: '#F2F2F2',
+                'app-border': '#D1D4D9',
+            },
+            fontFamily: {
+                sans: ['Noto Sans TC', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
                 "gradient-conic":
