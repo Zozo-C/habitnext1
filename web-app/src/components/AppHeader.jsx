@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Calendar, X, BookOpen } from 'lucide-react';
 import { getTodayStr } from '@/lib/utils';
 import Avatar from './Avatar';
+import HabitDay from './HabitDay';
 
 // Minimum horizontal travel (in px) to count as a week swipe. Below this
 // threshold we ignore the gesture so light scrolling / tapping doesn't shift
@@ -173,14 +174,14 @@ const AppHeader = ({
                 </div>
             )}
 
-            {/* Interactive Week Strip — tap any day to view its tasks; swipe
+            {/* Interactive Week Strip with HabitDay — tap any day to view its tasks; swipe
                 left/right on the strip to shift the displayed week ±7 days.
                 When the strip is showing a non-current week, a tiny "今"
                 badge appears in the top-right corner to jump back. Today is
-                marked with an emerald dot. */}
+                marked with a green circle. */}
             {currentView === 'daily' && (
                 <div
-                    className="relative flex items-center px-1 md:px-6 pb-0 touch-pan-y select-none"
+                    className="relative flex items-center justify-center px-2 md:px-6 py-3 gap-2 touch-pan-y select-none bg-white border-b border-gray-100 overflow-x-auto no-scrollbar"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
@@ -195,20 +196,16 @@ const AppHeader = ({
                                     if (swipedRef.current) return;
                                     onSelectDate?.(cell.dateStr);
                                 }}
-                                className={`flex-1 flex flex-col items-center justify-center py-2 px-1 cursor-pointer relative transition-colors duration-200 ${
-                                    isSelected
-                                        ? 'text-[#169E6B] font-bold'
-                                        : cell.isToday
-                                            ? 'text-[#374151] font-medium'
-                                            : 'text-[#9CA3AF] font-medium hover:text-[#374151]'
-                                }`}
+                                className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer transition-all duration-200 hover:opacity-80 active:scale-95"
                             >
-                                <span className="text-[11px] leading-none">{cell.label}</span>
-                                <span className="text-sm leading-tight mt-0.5">{cell.dayNum}</span>
-                                {cell.isToday && !isSelected && (
-                                    <span className="absolute top-0.5 right-1/2 translate-x-3 w-1 h-1 bg-brand-green rounded-full" />
-                                )}
-                                {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-brand-green rounded-t-full" />}
+                                <span className="text-[10px] font-medium text-gray-500 leading-none">{cell.label}</span>
+                                <div className="scale-75 origin-top">
+                                    <HabitDay
+                                        status={isSelected ? 'inProgress' : cell.isToday ? 'done' : 'unstarted'}
+                                        dateStr={cell.dateStr}
+                                        progress={isSelected ? 0.5 : 0}
+                                    />
+                                </div>
                             </button>
                         );
                     })}
