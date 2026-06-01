@@ -416,6 +416,7 @@ const MainApp = () => {
                                     onTaskUpdate={handleTaskUpdate}
                                     onUpdateProgress={handleUpdateProgress}
                                     onAfterAction={() => { if (user?.id) fetchTasks(user.id); }}
+                                    onSelectDate={setSelectedDate}
                                 />
                             </div>
                         )}
