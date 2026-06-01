@@ -22,8 +22,10 @@ import AspirationPicker from './AspirationPicker';
 import AspirationRecommendationPanel from './AspirationRecommendationPanel';
 import UndoToast from './UndoToast';
 import BottomTabBar from './BottomTabBar';
+import StreakCelebration from './StreakCelebration';
+import OnboardingFlow from './Onboarding/OnboardingFlow';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
-import { generateId, getTodayStr, isTaskDueToday, isCompletedOnDate } from '@/lib/utils';
+import { generateId, getTodayStr, isTaskDueToday, isCompletedOnDate, calculateOverallStreak } from '@/lib/utils';
 import { cueOrderFor } from '@/lib/anchors';
 import { SLEEP_TYPE_PROFILES } from '@/lib/sleepTypeKeys';
 import { domainToIconKey } from '@/lib/constants';
@@ -60,8 +62,23 @@ const MainApp = () => {
     const [initialTemplateForExplorer, setInitialTemplateForExplorer] = useState(null);
     const [aspirationHabitForLibrary, setAspirationHabitForLibrary] = useState(null);
 
+    // Onboarding and celebration states
+    const [onboardingCompleted, setOnboardingCompleted] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('onboarding_completed') === 'true';
+        }
+        return false;
+    });
+    const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+    const [todayFirstTaskCompleted, setTodayFirstTaskCompleted] = useState(false);
+
     const onViewingTaskUpdated = (taskId, updatedTask) => {
         if (viewingTask?.id === taskId) setViewingTask(updatedTask);
+    };
+
+    const handleOnboardingComplete = () => {
+        setOnboardingCompleted(true);
+        localStorage.setItem('onboarding_completed', 'true');
     };
 
     const {
@@ -135,6 +152,13 @@ const MainApp = () => {
         if (task.type === 'quantitative' || task.type === 'checklist') return;
         scheduleCompletionExit(task);
         setUndoToast({ taskId: task.id, date, message: `完成「${task.title}」` });
+
+        // Trigger celebration on first task completion of today
+        const isFirstTaskToday = !todayFirstTaskCompleted && !completedDailyTasks?.length;
+        if (isFirstTaskToday) {
+            setTodayFirstTaskCompleted(true);
+            setShowStreakCelebration(true);
+        }
     };
 
     const handleUndoCompletion = async () => {
@@ -328,6 +352,11 @@ const MainApp = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 text-emerald-600 font-bold">載入中...</div>
     );
 
+    // Show onboarding if not completed
+    if (user && !onboardingCompleted) {
+        return <OnboardingFlow user={user} onComplete={handleOnboardingComplete} />;
+    }
+
     return (
         <>
             <div className="min-h-screen w-full bg-[#F2F2F2] flex flex-col md:flex-row md:max-w-5xl md:mx-auto overflow-hidden md:shadow-xl md:rounded-xl md:my-8 md:border md:border-[#D1D4D9]">
@@ -353,9 +382,6 @@ const MainApp = () => {
                             <div className="animate-fade-in-up">
                                 {!recDismissed && (
                                     <RecommendationCardRow
-                                        user={user}
-                                        hasJoinedFlowerTemplate={hasJoinedFlowerTemplate}
-                                        hasJoinedSleepTemplate={hasJoinedSleepTemplate}
                                         onOpenTemplateExplorer={() => setIsTemplateExplorerOpen(true)}
                                         onDismiss={() => setRecDismissed(true)}
                                     />
@@ -494,6 +520,12 @@ const MainApp = () => {
                 onViewChange={setCurrentView}
                 onOpenAddFlow={() => { setIsLibraryModalOpen(true); setEditingTask(null); setSelectedDate(getTodayStr()); }}
             />
+            {showStreakCelebration && (
+                <StreakCelebration
+                    isVisible={showStreakCelebration}
+                    onClose={() => setShowStreakCelebration(false)}
+                />
+            )}
         </>
     );
 };
