@@ -160,13 +160,22 @@ const AppHeader = ({
                 <div className="px-4 pt-5 pb-4">
                     <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">{greeting}</p>
-                        <button
-                            onClick={onOpenProfile || (() => onViewChange('daily'))}
-                            className="hover:opacity-70 active:opacity-50 transition-opacity"
-                            aria-label="開啟個人資料"
-                        >
-                            <Avatar user={user} size="w-8 h-8" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => onViewChange('dashboard_detail')}
+                                className="hover:opacity-70 active:opacity-50 transition-opacity"
+                                aria-label="打開日曆"
+                            >
+                                <Calendar size={20} className="text-[#6B7280]" />
+                            </button>
+                            <button
+                                onClick={onOpenProfile || (() => onViewChange('daily'))}
+                                className="hover:opacity-70 active:opacity-50 transition-opacity"
+                                aria-label="開啟個人資料"
+                            >
+                                <Avatar user={user} size="w-8 h-8" />
+                            </button>
+                        </div>
                     </div>
                     <p className="text-2xl font-bold text-[#1A1A1A] mb-3">{user?.nickname || '訪客'}</p>
 
