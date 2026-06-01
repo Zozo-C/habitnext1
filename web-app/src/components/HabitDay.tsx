@@ -45,7 +45,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+        className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
         {/* 中間淺灰色圓 + 日期 */}
         <svg width="52" height="52" viewBox="0 0 52 52">
@@ -80,7 +80,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-[70px] h-[64px] bg-[#5a5a5a] rounded-[20px] flex items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+        className="w-[70px] h-[64px] bg-white rounded-[20px] flex items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
         <svg width="56" height="56" viewBox="0 0 56 56">
           {/* 綠色實心圓 */}
@@ -113,53 +113,38 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+      className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
     >
-      {/* 中間圓形進度圖 - 參照設計截圖的比例 */}
-      <svg width="52" height="52" viewBox="0 0 52 52" className="-rotate-90">
-        {/* 背景灰色圓 */}
-        <circle
-          cx="26"
-          cy="26"
-          r={radius}
-          fill="none"
-          stroke="#d1d5db"
-          strokeWidth="4"
-        />
-
-        {/* 進度圓 - 黃色，參照設計的黃色 */}
-        <motion.circle
-          cx="26"
-          cy="26"
-          r={radius}
-          fill="none"
-          stroke="#FFD54F"
-          strokeWidth="4"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          animate={{
-            strokeDashoffset: strokeDashoffset,
-          }}
-          transition={{
-            duration: 0.5,
-            ease: 'easeOut',
-          }}
-        />
-
-        {/* 圓心顯示日期數字 */}
-        <text
-          x="26"
-          y="32"
-          textAnchor="middle"
-          fontSize="16"
-          fontWeight="700"
-          fill="#374151"
-          fontFamily="system-ui, -apple-system, sans-serif"
-        >
+      <div className="relative w-[52px] h-[52px]">
+        {/* 進度圓弧，旋轉讓起點在12點方向 */}
+        <svg width="52" height="52" viewBox="0 0 52 52" className="-rotate-90 absolute inset-0">
+          <circle
+            cx="26"
+            cy="26"
+            r={radius}
+            fill="none"
+            stroke="#d1d5db"
+            strokeWidth="4"
+          />
+          <motion.circle
+            cx="26"
+            cy="26"
+            r={radius}
+            fill="none"
+            stroke={progress >= 1 ? '#4CAF50' : '#FFD54F'}
+            strokeWidth="4"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            animate={{ strokeDashoffset }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          />
+        </svg>
+        {/* 日期文字獨立疊加，不受 SVG 旋轉影響 */}
+        <span className="absolute inset-0 flex items-center justify-center text-[16px] font-bold text-[#374151]">
           {displayText}
-        </text>
-      </svg>
+        </span>
+      </div>
     </motion.div>
   );
 };

@@ -81,6 +81,14 @@ const AppHeader = ({
         return tasksForDate.every(t => isCompletedOnDate(t, dateStr));
     };
 
+    const getDateProgress = (dateStr) => {
+        if (!tasks.length) return 0;
+        const tasksForDate = tasks.filter(t => isTaskDueToday(t, dateStr) && (!t.status || t.status === 'active'));
+        if (tasksForDate.length === 0) return 0;
+        const completed = tasksForDate.filter(t => isCompletedOnDate(t, dateStr)).length;
+        return completed / tasksForDate.length;
+    };
+
     const shiftWeek = (deltaDays) => {
         const d = new Date(weekAnchor);
         d.setDate(d.getDate() + deltaDays);
@@ -165,9 +173,17 @@ const AppHeader = ({
     return (
         <div className={`bg-white sticky top-0 z-30 border-b border-[#D1D4D9] ${className || ''}`}>
             {currentView === 'daily' ? (
-                <div className="px-4 pt-5 pb-4">
+                <div className="px-4 pt-5 pb-0">
                     <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">{greeting}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">{greeting}</p>
+                            {overallStreak > 0 && (
+                                <div className="flex items-center gap-1 px-2 py-0.5 bg-[#FEF3C7] rounded-full">
+                                    <Flame size={11} className="text-[#F59E0B]" />
+                                    <span className="text-[11px] font-semibold text-[#92400E]">{overallStreak} 天連續</span>
+                                </div>
+                            )}
+                        </div>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => onViewChange('dashboard_detail')}
@@ -185,23 +201,7 @@ const AppHeader = ({
                             </button>
                         </div>
                     </div>
-                    <p className="text-2xl font-bold text-[#1A1A1A] mb-3">{user?.nickname || '訪客'}</p>
-
-                    {/* Streak and Weekly Goals Stats */}
-                    <div className="flex gap-2">
-                        {overallStreak > 0 && (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FEF3C7] rounded-full">
-                                <Flame size={14} className="text-[#F59E0B]" />
-                                <span className="text-xs font-semibold text-[#92400E]">{overallStreak} 天連續</span>
-                            </div>
-                        )}
-                        {weeklyGoalProgress.total > 0 && (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#DBEAFE] rounded-full">
-                                <Target size={14} className="text-[#3B82F6]" />
-                                <span className="text-xs font-semibold text-[#1E40AF]">{weeklyGoalProgress.completed}/{weeklyGoalProgress.total} 本週</span>
-                            </div>
-                        )}
-                    </div>
+                    <p className="text-2xl font-bold text-[#1A1A1A]">{user?.nickname || '訪客'}</p>
                 </div>
             ) : (
                 <div className="flex items-center justify-between px-4 py-3">
@@ -236,7 +236,7 @@ const AppHeader = ({
                 marked with a green circle. */}
             {currentView === 'daily' && (
                 <div
-                    className="relative flex items-center justify-center px-2 md:px-6 py-3 gap-2 touch-pan-y select-none bg-white border-b border-gray-100 overflow-x-auto no-scrollbar"
+                    className="relative flex items-center justify-center px-2 md:px-6 pt-3 pb-0 gap-2 touch-pan-y select-none bg-white border-b border-gray-100 overflow-x-auto no-scrollbar"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
@@ -255,11 +255,11 @@ const AppHeader = ({
                                 className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer transition-all duration-200 hover:opacity-80 active:scale-95 relative"
                             >
                                 <span className="text-[10px] font-medium text-gray-500 leading-none">{cell.label}</span>
-                                <div className="scale-75 origin-top">
+                                <div className="scale-75 origin-top -mb-2">
                                     <HabitDay
                                         status={isSelected ? 'inProgress' : isFullyComplete ? 'done' : 'unstarted'}
                                         dateStr={cell.dateStr}
-                                        progress={isSelected ? 0.5 : 0}
+                                        progress={getDateProgress(cell.dateStr)}
                                     />
                                 </div>
                                 {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-[#169E6B] rounded-t-full" />}
