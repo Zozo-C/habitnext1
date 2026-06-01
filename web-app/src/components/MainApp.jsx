@@ -25,7 +25,7 @@ import BottomTabBar from './BottomTabBar';
 import StreakCelebration from './StreakCelebration';
 import OnboardingFlow from './Onboarding/OnboardingFlow';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
-import { generateId, getTodayStr, isTaskDueToday, isCompletedOnDate, calculateOverallStreak } from '@/lib/utils';
+import { generateId, getTodayStr, isTaskDueToday, isCompletedOnDate, calculateStats } from '@/lib/utils';
 import { cueOrderFor } from '@/lib/anchors';
 import { SLEEP_TYPE_PROFILES } from '@/lib/sleepTypeKeys';
 import { domainToIconKey } from '@/lib/constants';
@@ -320,6 +320,20 @@ const MainApp = () => {
         });
     const incompleteDailyTasks = dailyTasks.filter(t => !isCompletedOnDate(t, selectedDate));
     const completedDailyTasks = dailyTasks.filter(t => isCompletedOnDate(t, selectedDate));
+
+    // Calculate overall streak for celebration
+    const overallStreak = (() => {
+        if (!tasks.length) return 0;
+        let maxStreak = 0;
+        tasks.forEach(task => {
+            if (task.history) {
+                const { streak } = calculateStats(task);
+                maxStreak = Math.max(maxStreak, streak);
+            }
+        });
+        return maxStreak;
+    })();
+
     const flexibleTasks = tasks.filter(t => t.recurrence?.mode === 'period_count');
     const dailySectionLabel = (() => {
         if (isSelectedToday) return '今日行程';
@@ -523,6 +537,7 @@ const MainApp = () => {
             />
             {showStreakCelebration && (
                 <StreakCelebration
+                    streak={overallStreak}
                     isVisible={showStreakCelebration}
                     onClose={() => setShowStreakCelebration(false)}
                 />

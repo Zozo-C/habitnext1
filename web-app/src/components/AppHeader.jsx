@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Calendar, X, BookOpen, Flame, Target } from 'lucide-react';
-import { getTodayStr, isCompletedOnDate, calculatePeriodProgress, calculateStats } from '@/lib/utils';
+import { getTodayStr, isCompletedOnDate, calculatePeriodProgress, calculateStats, isTaskDueToday } from '@/lib/utils';
 import Avatar from './Avatar';
 import HabitDay from './HabitDay';
 
@@ -72,6 +72,14 @@ const AppHeader = ({
     }, [selectedDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const weekCells = useMemo(() => computeWeek(weekAnchor), [weekAnchor]);
+
+    // Helper to check if all tasks for a date are completed
+    const isDateFullyComplete = (dateStr) => {
+        if (!tasks.length) return false;
+        const tasksForDate = tasks.filter(t => isTaskDueToday(t, dateStr) && (!t.status || t.status === 'active'));
+        if (tasksForDate.length === 0) return false;
+        return tasksForDate.every(t => isCompletedOnDate(t, dateStr));
+    };
 
     const shiftWeek = (deltaDays) => {
         const d = new Date(weekAnchor);
@@ -235,6 +243,7 @@ const AppHeader = ({
                 >
                     {weekCells.map((cell) => {
                         const isSelected = selectedDate === cell.dateStr;
+                        const isFullyComplete = isDateFullyComplete(cell.dateStr);
                         return (
                             <button
                                 type="button"
@@ -243,16 +252,17 @@ const AppHeader = ({
                                     if (swipedRef.current) return;
                                     onSelectDate?.(cell.dateStr);
                                 }}
-                                className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer transition-all duration-200 hover:opacity-80 active:scale-95"
+                                className="flex flex-col items-center gap-2 flex-shrink-0 cursor-pointer transition-all duration-200 hover:opacity-80 active:scale-95 relative"
                             >
                                 <span className="text-[10px] font-medium text-gray-500 leading-none">{cell.label}</span>
                                 <div className="scale-75 origin-top">
                                     <HabitDay
-                                        status={isSelected ? 'inProgress' : cell.isToday ? 'done' : 'unstarted'}
+                                        status={isSelected ? 'inProgress' : isFullyComplete ? 'done' : 'unstarted'}
                                         dateStr={cell.dateStr}
                                         progress={isSelected ? 0.5 : 0}
                                     />
                                 </div>
+                                {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-[#169E6B] rounded-t-full" />}
                             </button>
                         );
                     })}
