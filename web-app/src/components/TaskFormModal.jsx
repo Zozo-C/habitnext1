@@ -26,7 +26,7 @@ const TaskFormModal = ({ isOpen, onClose, onSave, onDelete, initialData, default
     });
 
     const [customEmoji, setCustomEmoji] = useState('');
-    const [activeTab, setActiveTab] = useState('basic');
+    const [activeTab, setActiveTab] = useState('advance');
     const iconContainerRef = useRef(null);
 
     // Slice L — opt-out for power users: skip the candidate pool and
@@ -66,7 +66,7 @@ const TaskFormModal = ({ isOpen, onClose, onSave, onDelete, initialData, default
                     reminder: { enabled: false, offset: 0 }
                 });
             }
-            setActiveTab('basic');
+            setActiveTab('advance');
         } else {
             setShowLockedAlert(false);
         }
@@ -291,18 +291,13 @@ const TaskFormModal = ({ isOpen, onClose, onSave, onDelete, initialData, default
                         </div>
                     )}
 
-                    {/* Advanced Settings Toggle */}
+                    {/* Date, Recurrence & Reminder */}
                     <div className="border-t border-gray-100 pt-4">
-                        <button
-                            onClick={() => setActiveTab(activeTab === 'advance' ? 'basic' : 'advance')}
-                            className="flex items-center justify-between w-full text-sm font-bold text-gray-600 mb-3"
-                        >
-                            <span className="flex items-center gap-2"><Clock size={16} /> 日期、重複與提醒設定</span>
-                            {activeTab === 'advance' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                        </button>
+                        <p className="flex items-center gap-2 text-sm font-bold text-gray-600 mb-3">
+                            <Clock size={16} /> 日期、重複與提醒設定
+                        </p>
 
-                        {activeTab === 'advance' && (
-                            <div className="space-y-4 animate-fade-in-down">
+                        <div className="space-y-4">
 
                                 {/* SECTION 1: Date & Time */}
                                 <div className="bg-gray-50 p-4 rounded-xl">
@@ -534,7 +529,6 @@ const TaskFormModal = ({ isOpen, onClose, onSave, onDelete, initialData, default
                                 </div>
 
                             </div>
-                        )}
                     </div>
 
                     {/* Details */}

@@ -38,12 +38,13 @@ const RecommendationCardRow = ({ onOpenTemplateExplorer, onDismiss }) => {
                 {showSleep && (
                     <div className="flex-none w-72">
                         <CourseCard
-                            themeColor="#169E6B"
+                            themeColor="#7C3AED"
                             tag="睡眠處方"
                             title="睡眠處方小課程"
                             description="評估睡眠習慣，個性化睡眠優化方案，14 天改善睡眠品質"
                             buttonText="填寫問卷"
                             imageUrl="/images/course-sleep.svg"
+                            imageScale={1.4}
                             onButtonClick={onOpenTemplateExplorer}
                         />
                     </div>

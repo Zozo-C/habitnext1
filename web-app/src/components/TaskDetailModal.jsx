@@ -58,11 +58,11 @@ const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate 
                     <button onClick={onClose} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
                         <X size={24} className="text-gray-500" />
                     </button>
-                    <div className="flex gap-2">
-                        <button onClick={() => onEdit(task)} className="flex items-center gap-1 text-sm font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-200 transition-colors">
-                            <Edit2 size={14} /> 編輯
+                    {!task.isLocked && (
+                        <button onClick={() => onEdit(task)} className="p-2 -mr-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <Edit2 size={22} className="text-gray-500" />
                         </button>
-                    </div>
+                    )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6">
