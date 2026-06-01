@@ -367,6 +367,7 @@ const MainApp = () => {
                     onOpenExplore={() => setIsTemplateExplorerOpen(true)}
                     user={user} onOpenProfile={() => setIsProfileModalOpen(true)}
                     selectedDate={selectedDate} onSelectDate={setSelectedDate}
+                    tasks={tasks}
                     className="md:hidden"
                 />
                 <SidebarNavigation

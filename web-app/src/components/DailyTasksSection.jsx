@@ -1,5 +1,5 @@
 "use client";
-import { CalendarDays, Target, CheckCircle2 } from 'lucide-react';
+import { CalendarDays, CheckCircle2 } from 'lucide-react';
 import TaskCard from './TaskCard';
 
 const DailyTasksSection = ({
@@ -70,27 +70,6 @@ const DailyTasksSection = ({
                 </p>
             )}
         </div>
-
-        {isSelectedToday && flexibleTasks.length > 0 && (
-            <div>
-                <div className="flex items-center gap-2 mb-4">
-                    <Target size={20} className="text-[#F59E0B]" />
-                    <h3 className="text-xl font-bold text-[#1A1A1A]">週期目標</h3>
-                </div>
-                <div className="space-y-3">
-                    {flexibleTasks.map(task => (
-                        <TaskCard
-                            key={task.id}
-                            task={task}
-                            viewingDate={selectedDate}
-                            onClick={() => onTaskClick(task)}
-                            onUpdate={onUpdateProgress}
-                            onAfterAction={onAfterAction}
-                        />
-                    ))}
-                </div>
-            </div>
-        )}
     </div>
 );
 

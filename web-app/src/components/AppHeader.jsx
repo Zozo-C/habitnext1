@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Calendar, X, BookOpen } from 'lucide-react';
-import { getTodayStr } from '@/lib/utils';
+import { Calendar, X, BookOpen, Flame, Target } from 'lucide-react';
+import { getTodayStr, isCompletedOnDate, calculatePeriodProgress, calculateStats } from '@/lib/utils';
 import Avatar from './Avatar';
 import HabitDay from './HabitDay';
 
@@ -50,6 +50,7 @@ const AppHeader = ({
     // Date navigation — pass from MainApp so daily view can browse past/future
     selectedDate,
     onSelectDate,
+    tasks = [],
 }) => {
     // Week anchor — any date inside the displayed week. Initialized from
     // selectedDate (fallback today) so the strip opens on the week the user
@@ -115,6 +116,27 @@ const AppHeader = ({
     };
 
     const todayStr = getTodayStr();
+
+    // Calculate streaks and weekly stats
+    const overallStreak = useMemo(() => {
+        if (!tasks.length) return 0;
+        // Find the maximum streak among all tasks
+        let maxStreak = 0;
+        tasks.forEach(task => {
+            if (task.history) {
+                const { streak } = calculateStats(task);
+                maxStreak = Math.max(maxStreak, streak);
+            }
+        });
+        return maxStreak;
+    }, [tasks]);
+
+    const weeklyGoalProgress = useMemo(() => {
+        const periodTasks = tasks.filter(t => t.recurrence?.mode === 'period_count' && t.frequency === 'weekly');
+        const completed = periodTasks.filter(t => calculatePeriodProgress(t) >= t.recurrence.periodTarget).length;
+        return { completed, total: periodTasks.length };
+    }, [tasks]);
+
     const headerDateLabel = useMemo(() => {
         if (!selectedDate) return '';
         const d = new Date(selectedDate);
@@ -135,7 +157,7 @@ const AppHeader = ({
     return (
         <div className={`bg-white sticky top-0 z-30 border-b border-[#D1D4D9] ${className || ''}`}>
             {currentView === 'daily' ? (
-                <div className="px-4 pt-5 pb-3">
+                <div className="px-4 pt-5 pb-4">
                     <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-medium text-[#9CA3AF] uppercase tracking-wider">{greeting}</p>
                         <button
@@ -146,7 +168,23 @@ const AppHeader = ({
                             <Avatar user={user} size="w-8 h-8" />
                         </button>
                     </div>
-                    <p className="text-2xl font-bold text-[#1A1A1A]">{user?.nickname || '訪客'}</p>
+                    <p className="text-2xl font-bold text-[#1A1A1A] mb-3">{user?.nickname || '訪客'}</p>
+
+                    {/* Streak and Weekly Goals Stats */}
+                    <div className="flex gap-2">
+                        {overallStreak > 0 && (
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FEF3C7] rounded-full">
+                                <Flame size={14} className="text-[#F59E0B]" />
+                                <span className="text-xs font-semibold text-[#92400E]">{overallStreak} 天連續</span>
+                            </div>
+                        )}
+                        {weeklyGoalProgress.total > 0 && (
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#DBEAFE] rounded-full">
+                                <Target size={14} className="text-[#3B82F6]" />
+                                <span className="text-xs font-semibold text-[#1E40AF]">{weeklyGoalProgress.completed}/{weeklyGoalProgress.total} 本週</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div className="flex items-center justify-between px-4 py-3">

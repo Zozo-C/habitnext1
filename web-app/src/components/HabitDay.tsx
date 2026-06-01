@@ -1,0 +1,167 @@
+'use client';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface HabitDayProps {
+  status: 'inProgress' | 'done' | 'empty' | 'unstarted';
+  progress?: number; // 0 到 1，只有 inProgress 時使用
+  dateStr?: string; // 日期字串格式 YYYY-MM-DD
+}
+
+const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) => {
+  // 解析日期
+  let displayText = '1';
+  if (dateStr) {
+    const date = new Date(dateStr);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    // 如果是月份的第一天，顯示「月/日」，否則只顯示日期
+    displayText = day === 1 ? `${month}/${day}` : `${day}`;
+  } else {
+    const today = new Date().getDate();
+    displayText = today === 1 ? `${new Date().getMonth() + 1}/${displayText}` : `${displayText}`;
+  }
+
+  // SVG 圓形進度計算
+  const radius = 22;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference * (1 - Math.max(0, Math.min(1, progress)));
+
+  if (status === 'empty') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-[70px] h-[64px] bg-[#5a5a5a] rounded-[20px]"
+      />
+    );
+  }
+
+  if (status === 'unstarted') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+      >
+        {/* 中間淺灰色圓 + 日期 */}
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          {/* 淺灰色實心圓 */}
+          <circle
+            cx="26"
+            cy="26"
+            r="24"
+            fill="#e5e7eb"
+          />
+
+          {/* 淺灰色日期數字 */}
+          <text
+            x="26"
+            y="32"
+            textAnchor="middle"
+            fontSize="18"
+            fontWeight="700"
+            fill="#d1d5db"
+            fontFamily="system-ui, -apple-system, sans-serif"
+          >
+            {displayText}
+          </text>
+        </svg>
+      </motion.div>
+    );
+  }
+
+  if (status === 'done') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-[70px] h-[64px] bg-[#5a5a5a] rounded-[20px] flex items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+      >
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          {/* 綠色實心圓 */}
+          <circle
+            cx="28"
+            cy="28"
+            r="25"
+            fill="#4CAF50"
+          />
+          {/* 白色日期數字 */}
+          <text
+            x="28"
+            y="37"
+            textAnchor="middle"
+            fontSize="24"
+            fontWeight="700"
+            fill="white"
+            fontFamily="system-ui, -apple-system, sans-serif"
+          >
+            {displayText}
+          </text>
+        </svg>
+      </motion.div>
+    );
+  }
+
+  // inProgress 狀態 - 參照設計截圖
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center hover:shadow-md active:scale-95 transition-all cursor-pointer"
+    >
+      {/* 中間圓形進度圖 - 參照設計截圖的比例 */}
+      <svg width="52" height="52" viewBox="0 0 52 52" className="-rotate-90">
+        {/* 背景灰色圓 */}
+        <circle
+          cx="26"
+          cy="26"
+          r={radius}
+          fill="none"
+          stroke="#d1d5db"
+          strokeWidth="4"
+        />
+
+        {/* 進度圓 - 黃色，參照設計的黃色 */}
+        <motion.circle
+          cx="26"
+          cy="26"
+          r={radius}
+          fill="none"
+          stroke="#FFD54F"
+          strokeWidth="4"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          animate={{
+            strokeDashoffset: strokeDashoffset,
+          }}
+          transition={{
+            duration: 0.5,
+            ease: 'easeOut',
+          }}
+        />
+
+        {/* 圓心顯示日期數字 */}
+        <text
+          x="26"
+          y="32"
+          textAnchor="middle"
+          fontSize="16"
+          fontWeight="700"
+          fill="#374151"
+          fontFamily="system-ui, -apple-system, sans-serif"
+        >
+          {displayText}
+        </text>
+      </svg>
+    </motion.div>
+  );
+};
+
+export default HabitDay;
