@@ -123,7 +123,14 @@ const Berry = () => (
     </svg>
 );
 
+const Coco = () => (
+    <div className="w-full h-full bg-[#FFF3E8] flex items-end justify-center overflow-hidden">
+        <img src="/mascots/coco_q_r.svg" alt="Coco" className="w-[85%] object-contain" />
+    </div>
+);
+
 export const AVATAR_DEFS = [
+    { id: 'coco', label: 'Coco', Component: Coco },
     { id: 'sunrise', label: '日出', Component: Sunrise },
     { id: 'bloom', label: '花苞', Component: Bloom },
     { id: 'wave', label: '海浪', Component: Wave },

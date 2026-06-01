@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { CalendarDays, CheckCircle2, Target, ChevronDown } from 'lucide-react';
+import { CheckCircle2, ChevronDown } from 'lucide-react';
 import TaskCard from './TaskCard';
 
 const DailyTasksSection = ({
@@ -14,7 +14,7 @@ const DailyTasksSection = ({
         <div className="space-y-6">
             <div>
                 <div className="flex items-center gap-2 mb-4">
-                    <CalendarDays size={20} className="text-[#169E6B]" />
+                    <div className="w-1 h-5 bg-[#169E6B] rounded-full" />
                     <h3 className="text-xl font-bold text-[#1A1A1A]">{dailySectionLabel}</h3>
                 </div>
 
@@ -86,7 +86,7 @@ const DailyTasksSection = ({
             {isSelectedToday && flexibleTasks.length > 0 && (
                 <div>
                     <div className="flex items-center gap-2 mb-4">
-                        <Target size={20} className="text-[#F59E0B]" />
+                        <div className="w-1 h-5 bg-[#F59E0B] rounded-full" />
                         <h3 className="text-xl font-bold text-[#1A1A1A]">週期目標</h3>
                     </div>
                     <div className="space-y-3">

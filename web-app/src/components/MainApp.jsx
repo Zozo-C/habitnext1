@@ -391,7 +391,7 @@ const MainApp = () => {
                     onOpenProfile={() => setIsProfileModalOpen(true)}
                 />
                 <main className="flex-1 flex flex-col h-screen overflow-hidden relative min-w-0 w-full">
-                    <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-28 md:pb-6 no-scrollbar">
+                    <div className={`flex-1 overflow-y-auto no-scrollbar ${currentView === 'badges' ? 'pb-28 md:pb-6' : 'p-4 md:p-6 pb-28 md:pb-6'}`}>
 
                         {currentView === 'daily' && (
                             <div className="animate-fade-in-up">
@@ -454,10 +454,21 @@ const MainApp = () => {
                         )}
 
                         {currentView === 'badges' && (
-                            <div className="p-4 text-center py-20">
-                                <Award size={64} className="mx-auto text-yellow-400 mb-4" />
-                                <h2 className="text-2xl font-bold text-gray-800">成就中心</h2>
-                                <p className="text-gray-500">持續完成任務，解鎖更多徽章！</p>
+                            <div className="relative flex flex-col items-center justify-center h-[calc(100dvh-120px)] bg-white">
+                                {/* 背景裝飾 */}
+                                <div className="absolute top-6 right-8 w-20 h-20 rounded-full bg-[#169E6B] opacity-10 pointer-events-none" />
+                                <div className="absolute top-16 right-4 w-8 h-8 rounded-full bg-[#F59E0B] opacity-20 pointer-events-none" />
+                                <div className="absolute top-4 left-10 w-14 h-14 rotate-12 rounded-2xl bg-[#EC4899] opacity-10 pointer-events-none" />
+                                <div className="absolute top-24 left-4 w-5 h-5 rotate-45 bg-[#169E6B] opacity-15 pointer-events-none" />
+                                <div className="absolute bottom-16 right-6 w-12 h-12 rotate-45 rounded-lg bg-[#F59E0B] opacity-15 pointer-events-none" />
+                                <div className="absolute bottom-10 right-16 w-5 h-5 rounded-full bg-[#7C3AED] opacity-20 pointer-events-none" />
+                                <div className="absolute bottom-6 left-8 w-24 h-24 rounded-full bg-[#FBCFE8] opacity-40 pointer-events-none" />
+                                <div className="absolute bottom-24 left-6 w-6 h-6 rotate-12 rounded bg-[#F59E0B] opacity-25 pointer-events-none" />
+                                <div className="relative z-10 text-center">
+                                    <img src="/mascots/coco_q_r.svg" alt="Coco" className="w-[60px] mx-auto mb-4" />
+                                    <h2 className="text-2xl font-bold text-gray-800">成就中心</h2>
+                                    <p className="text-gray-500 mt-1">持續完成任務，解鎖更多徽章！</p>
+                                </div>
                             </div>
                         )}
                     </div>
