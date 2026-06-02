@@ -9,6 +9,7 @@ import TaskCard from './TaskCard';
 import UndoToast from './UndoToast';
 import TaskFormModal from './TaskFormModal';
 import TaskLibraryModal from './TaskLibraryModal';
+import BottomTabBar from './BottomTabBar';
 import DashboardSummaryCard from './DashboardSummaryCard';
 import HabitCalendar from './HabitCalendar';
 import TaskDetailModal from './TaskDetailModal';
@@ -1582,6 +1583,25 @@ const MainApp = () => {
                 onUndo={handleUndoCompletion}
                 onDismiss={() => setUndoToast(null)}
             />
+
+            {/* Mobile Bottom Tab Bar Navigation */}
+            <BottomTabBar
+                currentView={currentView}
+                onViewChange={setCurrentView}
+            />
+
+            {/* Mobile FAB (Floating Action Button) for adding new habit —
+                positioned fixed in bottom-right, above the tab bar */}
+            <button
+                onClick={() => {
+                    setEditingTask(null);
+                    setIsFormModalOpen(true);
+                }}
+                className="md:hidden fixed bottom-24 right-6 z-30 w-14 h-14 bg-[#169E6B] rounded-full flex items-center justify-center shadow-lg shadow-[#169E6B]/40 hover:bg-[#128E5F] active:bg-[#0F7750] active:scale-90 transition-all duration-200"
+                title="建立習慣"
+            >
+                <span className="text-2xl text-white leading-none">+</span>
+            </button>
         </>
     );
 };
