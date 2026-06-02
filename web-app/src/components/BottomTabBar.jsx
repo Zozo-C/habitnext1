@@ -6,6 +6,7 @@ const TABS = [
     { view: 'manage', icon: Grid, label: '計畫' },
     { view: 'dashboard_detail', icon: BarChart3, label: '詳情' },
     { view: 'stats', icon: BarChart3, label: '統計' },
+    { view: 'badges', icon: Award, label: '成就' },
     { view: 'journey', icon: Map, label: '旅程' },
 ];
 

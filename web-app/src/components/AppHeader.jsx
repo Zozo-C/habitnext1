@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Calendar, Award, Plus, X, BookOpen, BarChart3 } from 'lucide-react';
+import { Calendar, X } from 'lucide-react';
 import Avatar from './Avatar';
 import WeekStrip from './WeekStrip';
 
@@ -8,9 +8,6 @@ const WEEK_DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']; // Mo
 const AppHeader = ({
     onViewChange,
     currentView,
-    onOpenAddFlow,
-    onOpenBadges,
-    onOpenExplore,
     user,
     onOpenProfile,
     className,
@@ -58,25 +55,6 @@ const AppHeader = ({
                 )}
 
                 <div className="flex gap-2">
-                    {currentView === 'daily' && (
-                        <>
-                            <button onClick={onOpenExplore} className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center hover:bg-indigo-100 transition-colors">
-                                <BookOpen size={20} />
-                            </button>
-                            <button onClick={() => onViewChange('dashboard_detail')} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-colors">
-                                <Calendar size={20} />
-                            </button>
-                            <button onClick={() => onViewChange('stats')} className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center hover:bg-purple-100 transition-colors">
-                                <BarChart3 size={20} />
-                            </button>
-                            <button onClick={onOpenBadges} className="w-8 h-8 bg-gray-100 text-yellow-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
-                                <Award size={20} />
-                            </button>
-                            <button onClick={onOpenAddFlow} className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors">
-                                <Plus size={20} />
-                            </button>
-                        </>
-                    )}
                     {(currentView !== 'daily' && currentView !== 'dashboard_detail') && (
                         <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors">
                             <Calendar size={20} />
@@ -85,11 +63,6 @@ const AppHeader = ({
                     {currentView === 'dashboard_detail' && (
                         <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
                             <X size={20} />
-                        </button>
-                    )}
-                    {currentView === 'manage' && (
-                        <button onClick={onOpenAddFlow} className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white hover:bg-gray-700 transition-colors">
-                            <Plus size={20} />
                         </button>
                     )}
                 </div>

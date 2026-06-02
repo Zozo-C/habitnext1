@@ -1027,20 +1027,6 @@ const MainApp = () => {
                 <AppHeader
                     onViewChange={setCurrentView}
                     currentView={currentView}
-                    onOpenAddFlow={() => {
-                        // [+] opens TaskLibraryModal (the habit picker). Direct
-                        // task creation stays the default — most users come
-                        // here knowing roughly what they want to add. The
-                        // aspiration funnel is reachable as an entry button
-                        // inside TaskLibraryModal's domain view for users
-                        // who prefer to start from an outcome / goal.
-                        setIsLibraryModalOpen(true);
-                        setIsFormModalOpen(false);
-                        setEditingTask(null);
-                        setSelectedDate(getTodayStr());
-                    }}
-                    onOpenBadges={() => setCurrentView('badges')}
-                    onOpenExplore={() => setIsTemplateExplorerOpen(true)}
                     user={user}
                     onOpenProfile={() => setIsProfileModalOpen(true)}
                     selectedDate={selectedDate}
