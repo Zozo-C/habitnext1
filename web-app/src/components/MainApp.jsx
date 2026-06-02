@@ -22,6 +22,7 @@ import { USER_TYPE_PROFILES } from '@/lib/typeKeys';
 import { SLEEP_TYPE_PROFILES } from '@/lib/sleepTypeKeys';
 import { CATEGORY_CONFIG, domainToIconKey } from '@/lib/constants';
 import { visibleSubtasks, computeChecklistValue } from '@/lib/subtasks';
+import { mockTasks } from '@/data/mockData';
 import PlanGroup from './PlanGroup';
 import TemplateExplorer from './TemplateExplorer';
 import ProfileModal from './ProfileModal';
@@ -169,45 +170,58 @@ const MainApp = () => {
         setLoading(true);
         try {
             const res = await fetch(`/api/tasks?userId=${userId}`);
+            let data;
             if (res.ok) {
-                const data = await res.json();
-                // Transform history array to object map for frontend compatibility
-                const formattedTasks = data.map(t => {
-                    const historyMap = {};
-                    const dailyProgressMap = {};
-                    const locationByDate = {};   // ★ Slice O — { 'yyyy-mm-dd': '台北' }
-                    const photoByDate = {};      // ★ Slice Q — { 'yyyy-mm-dd': true }
-
-                    if (t.history) {
-                        t.history.forEach(h => {
-                            if (t.type === 'checklist') {
-                                historyMap[h.date] = {
-                                    value: h.value,
-                                    completed: h.completed,
-                                    subtaskCompletions: h.subtaskCompletions || {},
-                                };
-                            } else {
-                                const val = t.type === 'quantitative' || t.recurrence?.mode === 'period_count' ? h.value : h.completed;
-                                historyMap[h.date] = val;
-                            }
-
-                            if (t.type === 'quantitative') {
-                                dailyProgressMap[h.date] = {
-                                    value: h.value,
-                                    completed: h.completed
-                                };
-                            }
-
-                            if (h.city) locationByDate[h.date] = h.city;   // ★ Slice O
-                            if (h.photoUrl) photoByDate[h.date] = true;    // ★ Slice Q
-                        });
-                    }
-                    return { ...t, history: historyMap, dailyProgress: dailyProgressMap, locationByDate, photoByDate };
-                });
-                setTasks(formattedTasks);
+                data = await res.json();
+            } else {
+                // Fallback to mock data if API fails
+                console.warn('API failed, using mock tasks');
+                data = mockTasks;
             }
+
+            // Transform history array to object map for frontend compatibility
+            const formattedTasks = data.map(t => {
+                const historyMap = {};
+                const dailyProgressMap = {};
+                const locationByDate = {};   // ★ Slice O — { 'yyyy-mm-dd': '台北' }
+                const photoByDate = {};      // ★ Slice Q — { 'yyyy-mm-dd': true }
+
+                // Handle both array (API) and object (mock) formats
+                const historyData = Array.isArray(t.history) ? t.history :
+                    typeof t.history === 'object' ? Object.entries(t.history).map(([date, value]) => ({ date, ...value })) : [];
+
+                historyData.forEach(h => {
+                    if (t.type === 'checklist') {
+                        historyMap[h.date] = {
+                            value: h.value,
+                            completed: h.completed,
+                            subtaskCompletions: h.subtaskCompletions || {},
+                        };
+                    } else {
+                        const val = t.type === 'quantitative' || t.recurrence?.mode === 'period_count' ? h.value : h.completed;
+                        historyMap[h.date] = val;
+                    }
+
+                    if (t.type === 'quantitative') {
+                        dailyProgressMap[h.date] = {
+                            value: h.value,
+                            completed: h.completed
+                        };
+                    }
+
+                    if (h.city) locationByDate[h.date] = h.city;   // ★ Slice O
+                    if (h.photoUrl) photoByDate[h.date] = true;    // ★ Slice Q
+                });
+
+                // Use existing history if already formatted as object
+                const finalHistory = Array.isArray(t.history) ? historyMap : t.history;
+                return { ...t, history: finalHistory, dailyProgress: dailyProgressMap, locationByDate, photoByDate };
+            });
+            setTasks(formattedTasks);
         } catch (err) {
             console.error('Fetch tasks failed', err);
+            // Use mock data as fallback
+            setTasks(mockTasks);
         } finally {
             setLoading(false);
         }
