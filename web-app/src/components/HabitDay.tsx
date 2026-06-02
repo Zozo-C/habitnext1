@@ -43,6 +43,18 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
             r="18"
             fill="#e5e7eb"
           />
+
+          <text
+            x="20"
+            y="27"
+            textAnchor="middle"
+            fontSize="16"
+            fontWeight="700"
+            fill="#d1d5db"
+            fontFamily="system-ui, -apple-system, sans-serif"
+          >
+            {displayText}
+          </text>
         </svg>
       </motion.div>
     );
