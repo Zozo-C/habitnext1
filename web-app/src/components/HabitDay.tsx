@@ -49,9 +49,9 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
           {/* 淺灰色日期數字 */}
           <text
             x="20"
-            y="26"
+            y="27"
             textAnchor="middle"
-            fontSize="14"
+            fontSize="16"
             fontWeight="700"
             fill="#d1d5db"
             fontFamily="system-ui, -apple-system, sans-serif"
@@ -82,9 +82,9 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
           {/* 白色日期數字 */}
           <text
             x="20"
-            y="26"
+            y="27"
             textAnchor="middle"
-            fontSize="14"
+            fontSize="16"
             fontWeight="700"
             fill="white"
             fontFamily="system-ui, -apple-system, sans-serif"
@@ -126,7 +126,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         />
 
         {/* 日期文字 */}
-        <span className="absolute inset-0 flex items-center justify-center text-[14px] font-bold text-[#374151]">
+        <span className="absolute inset-0 flex items-center justify-center text-[16px] font-bold text-[#374151]">
           {displayText}
         </span>
       </div>
