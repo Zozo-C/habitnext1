@@ -104,7 +104,7 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
 
     return (
         <div
-            className={`relative flex items-center touch-pan-y select-none ${className}`}
+            className={`relative flex items-center touch-pan-y select-none bg-transparent ${className}`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
