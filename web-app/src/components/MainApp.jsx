@@ -1146,7 +1146,7 @@ const MainApp = () => {
                                     without this desktop users have no way to
                                     switch dates. Hidden on mobile to avoid a
                                     duplicate strip. */}
-                                <div className="hidden md:block mb-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                                <div className="hidden md:block mb-4 bg-transparent rounded-2xl border border-gray-100 shadow-sm overflow-visible">
                                     <WeekStrip
                                         selectedDate={selectedDate}
                                         onSelectDate={setSelectedDate}

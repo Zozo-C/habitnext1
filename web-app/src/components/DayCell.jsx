@@ -16,23 +16,25 @@ import HabitDay from './HabitDay';
 
 const DayCell = ({ cell, isSelected, habitStatus, progress = 0, onSelect, swipedRef }) => {
   return (
-    <button
-      type="button"
-      onClick={() => {
-        if (swipedRef.current) return;
-        onSelect?.(cell.dateStr);
-      }}
-      className={`flex flex-1 flex-col items-center justify-center py-2 px-1 cursor-pointer relative transition-colors active:scale-95 ${
-        isSelected ? 'border-2 border-gray-300 rounded-full' : ''
-      }`}
-    >
-      <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
-      <HabitDay
-        status={habitStatus}
-        progress={progress}
-        dateStr={cell.dateStr}
-      />
-    </button>
+    <div className="flex flex-1 items-center justify-center">
+      <button
+        type="button"
+        onClick={() => {
+          if (swipedRef.current) return;
+          onSelect?.(cell.dateStr);
+        }}
+        className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer relative transition-colors active:scale-95 overflow-visible ${
+          isSelected ? 'border-2 border-gray-300 rounded-full w-[48px]' : 'w-full'
+        }`}
+      >
+        <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
+        <HabitDay
+          status={habitStatus}
+          progress={progress}
+          dateStr={cell.dateStr}
+        />
+      </button>
+    </div>
   );
 };
 
