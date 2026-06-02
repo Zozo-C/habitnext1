@@ -124,12 +124,26 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '', tasks = [] }) =
 
             {weekCells.map((cell) => {
                 const isSelected = selectedDate === cell.dateStr;
-                // Determine habit status based on actual task completion
-                // If any task is completed on this date, show 'done'; otherwise 'unstarted'
-                const anyTaskCompleted = tasks && tasks.length > 0
-                    ? tasks.some(task => isCompletedOnDate(task, cell.dateStr))
-                    : false;
-                const habitStatus = anyTaskCompleted ? 'done' : 'unstarted';
+
+                // Calculate daily progress as percentage of completed tasks
+                let habitStatus = 'unstarted';
+                let progressPercent = 0;
+
+                if (tasks && tasks.length > 0) {
+                    const completedCount = tasks.filter(task => isCompletedOnDate(task, cell.dateStr)).length;
+                    progressPercent = (completedCount / tasks.length) * 100;
+
+                    if (progressPercent === 100) {
+                        habitStatus = 'done';
+                    } else if (progressPercent > 0) {
+                        habitStatus = 'inProgress';
+                    } else {
+                        habitStatus = 'unstarted';
+                    }
+                }
+
+                // Convert percentage to 0-1 range for progress bar
+                const progress = progressPercent / 100;
 
                 return (
                     <DayCell
@@ -137,7 +151,7 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '', tasks = [] }) =
                         cell={cell}
                         isSelected={isSelected}
                         habitStatus={habitStatus}
-                        progress={0}
+                        progress={progress}
                         onSelect={onSelectDate}
                         swipedRef={swipedRef}
                     />
