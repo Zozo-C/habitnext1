@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface HabitDayProps {
-  status: 'inProgress' | 'done' | 'unstarted';
+  status: 'inProgress' | 'done' | 'unstarted' | 'empty';
   progress?: number; // 0 到 1，只有 inProgress 時使用
   dateStr?: string; // 日期字串格式 YYYY-MM-DD
 }
@@ -27,6 +27,17 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
   const radius = 22;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - Math.max(0, Math.min(1, progress)));
+
+  if (status === 'empty') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-10 h-10 bg-[#5a5a5a] rounded-lg"
+      />
+    );
+  }
 
   if (status === 'unstarted') {
     return (

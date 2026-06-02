@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import HabitDay from './HabitDay';
 
-type DayStatus = 'unstarted' | 'inProgress' | 'done';
+type DayStatus = 'empty' | 'unstarted' | 'inProgress' | 'done';
 
 export default function HabitDayDemo() {
   const [status, setStatus] = useState<DayStatus>('unstarted');
@@ -39,7 +39,7 @@ export default function HabitDayDemo() {
               狀態
             </label>
             <div className="flex gap-3 flex-wrap">
-              {(['unstarted', 'inProgress', 'done'] as const).map((s) => (
+              {(['empty', 'unstarted', 'inProgress', 'done'] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatus(s)}
@@ -116,8 +116,8 @@ export default function HabitDayDemo() {
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">所有狀態展示</h2>
 
-          <div className="grid grid-cols-3 gap-8">
-            {(['unstarted', 'inProgress', 'done'] as const).map((s) => (
+          <div className="grid grid-cols-4 gap-8">
+            {(['empty', 'unstarted', 'inProgress', 'done'] as const).map((s) => (
               <div key={s} className="flex flex-col items-center gap-4">
                 <div className="flex justify-center p-6 bg-gray-50 rounded-xl w-full">
                   <HabitDay
