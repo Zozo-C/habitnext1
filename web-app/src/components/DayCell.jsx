@@ -22,8 +22,8 @@ const DayCell = ({ cell, isSelected, habitStatus, progress = 0, onSelect, swiped
         if (swipedRef.current) return;
         onSelect?.(cell.dateStr);
       }}
-      className={`flex flex-col items-center justify-center py-2 px-3 cursor-pointer relative transition-colors active:scale-95 ${
-        isSelected ? 'border border-gray-300 rounded-lg' : ''
+      className={`flex flex-col items-center justify-center py-2 px-2 cursor-pointer relative transition-colors active:scale-95 ${
+        isSelected ? 'border-2 border-gray-300 rounded-full' : ''
       }`}
     >
       <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>

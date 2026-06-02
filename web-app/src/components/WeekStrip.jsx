@@ -133,6 +133,7 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
                         cell={cell}
                         isSelected={isSelected}
                         habitStatus={habitStatus}
+                        progress={0}
                         onSelect={onSelectDate}
                         swipedRef={swipedRef}
                     />
