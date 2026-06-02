@@ -5,8 +5,10 @@ import HabitInsightSection from './insights/HabitInsightSection';
 import { CATEGORY_CONFIG, resolveIconKey } from '@/lib/constants';
 import { getTodayStr, isCompletedOnDate, calculateStats, isFutureDate } from '@/lib/utils';
 import { visibleSubtasks } from '@/lib/subtasks';
+import TaskActionMenu from './taskCard/TaskActionMenu';
+import LocationChip from './taskCard/LocationChip';
 
-const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate }) => {
+const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate, onAfterAction, onPickLocation }) => {
     const [currentDate, setCurrentDate] = useState(initialDate || getTodayStr());
 
     // Sync internal date when the modal re-opens for a different task or the
@@ -78,6 +80,17 @@ const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate 
                         </div>
                         <button onClick={() => handleDateChange(1)} className="p-1 hover:bg-gray-100 rounded-full text-gray-400"><ChevronRight size={20} /></button>
                     </div>
+
+                    {/* Slice O — completion location for this date */}
+                    {isCompleted && (
+                        <div className="flex justify-center mb-4" onClick={(e) => e.stopPropagation()}>
+                            <LocationChip
+                                city={task.locationByDate?.[currentDate] || null}
+                                recentCities={Object.values(task.locationByDate || {}).slice(-3)}
+                                onPick={(cityName) => onPickLocation?.(task, currentDate, cityName)}
+                            />
+                        </div>
+                    )}
 
                     {/* Main Info */}
                     <div className="flex flex-col items-center mb-8">
@@ -229,6 +242,21 @@ const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate 
                     )}
 
                 </div>
+
+                {/* Slice M — footer with lifecycle actions (pause / hide / delete) */}
+                {task?.id && (
+                    <TaskActionMenu
+                        taskId={task.id}
+                        taskTitle={task.title}
+                        variant="detail-footer"
+                        onAction={(action, success) => {
+                            if (success) {
+                                onClose?.();
+                                onAfterAction?.(action);
+                            }
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

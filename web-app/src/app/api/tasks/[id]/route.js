@@ -1,39 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-const JSON_FIELDS = ['recurrence', 'reminder', 'subtasks', 'metadata'];
-
-function deserializeTask(task) {
-    if (!task) return task;
-    const out = { ...task };
-    for (const f of JSON_FIELDS) {
-        if (typeof out[f] === 'string') {
-            try { out[f] = JSON.parse(out[f]); } catch { /* keep */ }
-        }
-    }
-    if (out.history) {
-        out.history = out.history.map(h => {
-            if (typeof h.subtaskCompletions === 'string') {
-                try { return { ...h, subtaskCompletions: JSON.parse(h.subtaskCompletions) }; } catch { return h; }
-            }
-            return h;
-        });
-    }
-    return out;
-}
-
-function toStr(val) {
-    if (val === null || val === undefined) return val;
-    return typeof val === 'string' ? val : JSON.stringify(val);
-}
-
+// PUT: Update a task (including history/progress)
 export async function PUT(request, { params }) {
     const { id } = params;
     try {
         const body = await request.json();
         const { historyUpdate, ...taskData } = body;
 
-        await prisma.task.update({
+        // 1. Update Task Details
+        let updatedTask = await prisma.task.update({
             where: { id },
             data: {
                 title: taskData.title,
@@ -43,47 +19,90 @@ export async function PUT(request, { params }) {
                 type: taskData.type,
                 category: taskData.category,
                 frequency: taskData.frequency,
-                recurrence: toStr(taskData.recurrence),
-                reminder: toStr(taskData.reminder),
-                subtasks: toStr(taskData.subtasks),
-                metadata: toStr(taskData.metadata),
+                recurrence: taskData.recurrence,
+                reminder: taskData.reminder,
+                subtasks: taskData.subtasks,
                 dailyTarget: taskData.dailyTarget,
                 unit: taskData.unit,
                 stepValue: taskData.stepValue,
                 date: taskData.date,
                 time: taskData.time,
+                // Slice M — accept status transitions to paused/archived from
+                // TaskCard action menu + TaskDetailModal footer. Validates the
+                // enum so a stray value can't poison the daily view filter.
                 ...(taskData.status !== undefined && ['candidate', 'active', 'paused', 'archived'].includes(taskData.status)
                     ? { status: taskData.status }
                     : {}),
             }
         });
 
+        // 2. Handle History Update (if provided)
+        // historyUpdate format: { date: '2023-01-01', completed: true, value: 10 }
         if (historyUpdate) {
-            const { date, completed, value, subtaskCompletions } = historyUpdate;
-            const scStr = subtaskCompletions != null ? JSON.stringify(subtaskCompletions) : null;
+            const { date, completed, value, subtaskCompletions, lat, lng, city, photoUrl, memoNote } = historyUpdate;
+
+            // Slice O — only write location fields when provided. A normal
+            // completion without location (feature off / denied) leaves any
+            // existing coords untouched.
+            const locWrite = {};
+            if (lat !== undefined) locWrite.lat = lat;
+            if (lng !== undefined) locWrite.lng = lng;
+            if (city !== undefined) locWrite.city = city;
+
+            // Slice Q — mirror locWrite for photo/memo. Omitting these fields
+            // leaves any existing values untouched; passing null explicitly
+            // clears them (intended "remove photo" path).
+            const memWrite = {};
+            if (photoUrl !== undefined) memWrite.photoUrl = photoUrl;
+            if (memoNote !== undefined) memWrite.memoNote = memoNote;
+
+            // Upsert history record
             await prisma.taskHistory.upsert({
-                where: { taskId_date: { taskId: id, date } },
-                update: { completed, value, subtaskCompletions: scStr },
-                create: { taskId: id, date, completed, value, subtaskCompletions: scStr }
+                where: {
+                    taskId_date: {
+                        taskId: id,
+                        date: date
+                    }
+                },
+                update: {
+                    completed,
+                    value,
+                    subtaskCompletions: subtaskCompletions ?? null,
+                    ...locWrite,
+                    ...memWrite
+                },
+                create: {
+                    taskId: id,
+                    date,
+                    completed,
+                    value,
+                    subtaskCompletions: subtaskCompletions ?? null,
+                    ...locWrite,
+                    ...memWrite
+                }
             });
         }
 
+        // Refetch with history
         const finalTask = await prisma.task.findUnique({
             where: { id },
             include: { history: true }
         });
 
-        return NextResponse.json(deserializeTask(finalTask));
+        return NextResponse.json(finalTask);
     } catch (error) {
         console.error('Update task error:', error);
         return NextResponse.json({ error: 'Failed to update task' }, { status: 500 });
     }
 }
 
+// DELETE: Delete a task
 export async function DELETE(request, { params }) {
     const { id } = params;
     try {
-        await prisma.task.delete({ where: { id } });
+        await prisma.task.delete({
+            where: { id }
+        });
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete task' }, { status: 500 });

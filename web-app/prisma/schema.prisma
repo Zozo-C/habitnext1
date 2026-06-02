@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("POSTGRES_URL")
+  directUrl = env("POSTGRES_URL")
 }
 
 // ============================================
@@ -21,7 +22,8 @@ model User {
   avatar       String? // ★ M3 Expressive avatar id ('sunrise', 'star', etc.) — see web-app/src/lib/avatars.jsx
   typeKey      String? // ★ 新增 — 'daisy' | 'rose' | 'orchid' | 'sunflower' (set by quiz module)
   sleepTypeKey String? // ★ 新增 — 'stress' | 'rhythm' | 'metabolic' | 'hormone'
-  identities   String  @default("") // ★ Slice K — 多身分並存（手動 / Profile 加；v1 不自動加冕）
+  identities   String[]     @default([]) // ★ Slice K — 多身分並存（手動 / Profile 加；v1 不自動加冕）
+  trackLocation Boolean     @default(false) // ★ Slice O — opt-in 記錄完成地點
   isActive     Boolean      @default(true)
   createdAt    DateTime     @default(now())
   tasks        Task[]
@@ -70,7 +72,7 @@ model Template {
   isPublic       Boolean      @default(false) // 是否公開讓所有用戶選用
   startDateType  String       @default("user_choice") // user_choice or fixed_date
   fixedStartDate DateTime? // Only used when startDateType === 'fixed_date'
-  tasks          String // 模板包含的任務清單
+  tasks          Json // 模板包含的任務清單
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   assignments    Assignment[]
@@ -110,9 +112,9 @@ model Task {
   frequency String // daily, weekly, monthly (Display Group)
 
   // JSON fields for complex objects
-  recurrence String // { type, interval, mode, ... }
-  reminder   String // { enabled, offset }
-  subtasks   String // Array of subtask objects
+  recurrence Json // { type, interval, mode, ... }
+  reminder   Json // { enabled, offset }
+  subtasks   Json // Array of subtask objects
 
   // Task specific settings
   dailyTarget Int?
@@ -138,7 +140,7 @@ model Task {
   // ★ end Slice L
 
   expertName String? // 指派專家名稱 (方便顯示)
-  metadata   String? // Phase info and other metadata
+  metadata   Json? // Phase info and other metadata
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -154,7 +156,14 @@ model TaskHistory {
   date               String // YYYY-MM-DD
   completed          Boolean @default(false)
   value              Int     @default(0) // For quantitative or period count; also count of true subtaskCompletions
-  subtaskCompletions String? // { [subtaskId]: boolean } — per-date checklist state
+  subtaskCompletions Json? // { [subtaskId]: boolean } — per-date checklist state
+  // ★ Slice O — 「在哪完成」城市級座標（opt-in）。只存數字 + 離線比對城市名。
+  lat                Float?
+  lng                Float?
+  city               String?
+  // ★ Slice Q — 美食回憶照片（opt-in）。存 Vercel Blob URL 字串；bytes 不在 DB。null = 未附。
+  photoUrl           String?
+  memoNote           String?  // 選填短 caption
 
   @@unique([taskId, date])
 }
@@ -201,9 +210,13 @@ model OfficialHabit {
   category    String // Reference to category name
   icon        String? // Icon key or emoji
 
+  // 預設錨點 — LIFE_MOMENTS 的 label（例「晚餐後」）。使用者加入此習慣時，
+  // 加入流程的 AnchorPicker 會預選此值（仍可改）。null = 無預設。可由後台調整。
+  defaultCue String?
+
   // NEW: Three difficulty levels (beginner/intermediate/challenge)
   // Each contains: { enabled, label, type, dailyTarget, unit, stepValue, subtasks, recurrence }
-  difficulties String // { beginner?: DifficultyConfig, intermediate?: DifficultyConfig, challenge?: DifficultyConfig }
+  difficulties Json // { beginner?: DifficultyConfig, intermediate?: DifficultyConfig, challenge?: DifficultyConfig }
 
   // Slice D — focus map coordinates. 1–5 integers per the rubric in
   // docs/superpowers/specs/2026-05-23-slice-d-focus-map-design.md §4.
@@ -238,11 +251,15 @@ model HabitInsight {
   detail   String // 300-800 chars, markdown — folded behind 展開
   takeaway String? // 15-40 chars, actionable single sentence (optional)
 
-  sources String // [{ label, url, type?: 'pubmed' | 'journal' | 'book' | 'other' }]
-  tags    String  @default("") // freeform, e.g. ["營養素", "抗老", "添加糖"]
+  sources Json // [{ label, url, type?: 'pubmed' | 'journal' | 'book' | 'other' }]
+  tags    String[] @default([]) // freeform, e.g. ["營養素", "抗老", "添加糖"]
 
   status String @default("draft") // draft | published | archived
   order  Int    @default(0) // admin-controlled per-habit ordering
+
+  // ★ 證據力指標 — { studyType, scale, causality, replication }，各為整數等級。
+  // null = 未評分（不顯示 badge）。total/tier 由 lib/evidenceStrength.js 推算。
+  evidence Json?
 
   aiGenerated  Boolean @default(false) // for editorial QA stats
   sourcePrompt String? // AI input audit trail (never user-visible)
