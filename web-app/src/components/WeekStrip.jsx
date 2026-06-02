@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { getTodayStr } from '@/lib/utils';
-import HabitDay from './HabitDay';
 
 // WeekStrip — the Mon-Sun date selector shown on the daily view.
 //
@@ -131,19 +130,20 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
                             if (swipedRef.current) return;
                             onSelectDate?.(cell.dateStr);
                         }}
-                        className="flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors"
+                        className={`flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors ${
+                            isSelected
+                                ? 'text-emerald-600 font-bold'
+                                : cell.isToday
+                                    ? 'text-gray-700 font-medium hover:text-emerald-500'
+                                    : 'text-gray-400 font-medium hover:text-gray-600'
+                        }`}
                     >
-                        {/* 顯示日期標籤 */}
-                        <span className="text-[11px] leading-none text-gray-600 font-medium mb-1">
-                            {cell.label}
-                        </span>
-                        {/* 使用 HabitDay 元件顯示日期 */}
-                        <div className={isSelected ? 'ring-2 ring-emerald-500 rounded-[20px]' : ''}>
-                            <HabitDay
-                                status={isSelected ? 'done' : 'unstarted'}
-                                dateStr={cell.dateStr}
-                            />
-                        </div>
+                        <span className="text-[11px] leading-none">{cell.label}</span>
+                        <span className="text-sm leading-tight mt-0.5">{cell.dayNum}</span>
+                        {cell.isToday && !isSelected && (
+                            <span className="absolute top-0.5 right-1/2 translate-x-3 w-1 h-1 bg-emerald-500 rounded-full" />
+                        )}
+                        {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-emerald-500 rounded-t-full" />}
                     </button>
                 );
             })}
