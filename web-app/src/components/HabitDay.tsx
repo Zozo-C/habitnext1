@@ -34,7 +34,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
+        className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
         {/* 中間淺灰色圓 + 日期 */}
         <svg width="52" height="52" viewBox="0 0 52 52">
@@ -69,7 +69,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-[70px] h-[64px] bg-white rounded-[20px] flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+        className="flex items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
         <svg width="56" height="56" viewBox="0 0 56 56">
           {/* 綠色實心圓 */}
@@ -102,7 +102,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-[70px] h-[64px] bg-white rounded-[20px] flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
+      className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
     >
       <div className="relative w-[52px] h-[52px]">
         {/* 進度圓弧，旋轉讓起點在12點方向 */}
