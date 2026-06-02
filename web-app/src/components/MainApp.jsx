@@ -30,6 +30,7 @@ import AspirationPicker from './AspirationPicker';
 import AspirationRecommendationPanel from './AspirationRecommendationPanel';
 import FocusMapModal from './FocusMapModal';
 import JourneyView from './journey/JourneyView';
+import AchievementCenter from './AchievementCenter';
 
 // StatsView is dynamically imported to keep recharts (~96kb gzip) off the
 // `/` route's First Load JS — it only loads when the user opens the stats tab.
@@ -1422,11 +1423,7 @@ const MainApp = () => {
                         )}
 
                         {currentView === 'badges' && (
-                            <div className="p-4 text-center py-20">
-                                <Award size={64} className="mx-auto text-yellow-400 mb-4" />
-                                <h2 className="text-2xl font-bold text-gray-800">成就中心</h2>
-                                <p className="text-gray-500">持續完成任務，解鎖更多徽章！</p>
-                            </div>
+                            <AchievementCenter onClose={() => setCurrentView('daily')} />
                         )}
 
                     </div>

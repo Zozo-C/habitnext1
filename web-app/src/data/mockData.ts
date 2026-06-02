@@ -58,3 +58,79 @@ export const courseCardData = [
     imageUrl: '/images/course-habit.png',
   },
 ];
+
+// Achievements / Badges Data
+export const achievementsData = [
+  {
+    id: 'first-step',
+    title: '第一步',
+    description: '完成第一個任務',
+    emoji: '🎯',
+    color: '#4CAF50',
+    unlocked: true,
+    unlockedDate: '2026-05-01',
+    progress: 1,
+    requirement: 1,
+  },
+  {
+    id: 'week-warrior',
+    title: '週末戰士',
+    description: '連續7天完成任務',
+    emoji: '💪',
+    color: '#FF6B6B',
+    unlocked: true,
+    unlockedDate: '2026-05-15',
+    progress: 7,
+    requirement: 7,
+  },
+  {
+    id: 'consistency-king',
+    title: '堅持之王',
+    description: '連續30天完成任務',
+    emoji: '👑',
+    color: '#FFD54F',
+    unlocked: false,
+    progress: 12,
+    requirement: 30,
+  },
+  {
+    id: 'early-bird',
+    title: '早起鳥',
+    description: '完成10個早晨任務',
+    emoji: '🌅',
+    color: '#FFA500',
+    unlocked: false,
+    progress: 6,
+    requirement: 10,
+  },
+  {
+    id: 'night-owl',
+    title: '夜貓子',
+    description: '完成10個夜間任務',
+    emoji: '🦉',
+    color: '#6B5B95',
+    unlocked: false,
+    progress: 4,
+    requirement: 10,
+  },
+  {
+    id: 'multitasker',
+    title: '多面手',
+    description: '同時進行5個不同類型的任務',
+    emoji: '🎪',
+    color: '#3498DB',
+    unlocked: true,
+    unlockedDate: '2026-05-20',
+    progress: 5,
+    requirement: 5,
+  },
+];
+
+// Achievement Center Labels
+export const achievementLabels = {
+  unlocked: '已解鎖',
+  locked: '尚未解鎖',
+  unlockedDate: '解鎖於',
+  progress: '進度',
+  requirement: '需要完成',
+};
