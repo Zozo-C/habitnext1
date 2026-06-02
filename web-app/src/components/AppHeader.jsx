@@ -14,6 +14,8 @@ const AppHeader = ({
     // Date navigation — pass from MainApp so daily view can browse past/future
     selectedDate,
     onSelectDate,
+    // Tasks for WeekStrip completion status
+    tasks = [],
 }) => {
     const headerDateLabel = useMemo(() => {
         if (!selectedDate) return '';
@@ -76,6 +78,7 @@ const AppHeader = ({
                 <WeekStrip
                     selectedDate={selectedDate}
                     onSelectDate={onSelectDate}
+                    tasks={tasks}
                     className="px-1 md:px-6 pb-0"
                 />
             )}

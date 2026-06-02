@@ -1031,6 +1031,7 @@ const MainApp = () => {
                     onOpenProfile={() => setIsProfileModalOpen(true)}
                     selectedDate={selectedDate}
                     onSelectDate={setSelectedDate}
+                    tasks={tasks}
                     className="md:hidden" // Hide on desktop
                 />
 
@@ -1150,6 +1151,7 @@ const MainApp = () => {
                                     <WeekStrip
                                         selectedDate={selectedDate}
                                         onSelectDate={setSelectedDate}
+                                        tasks={tasks}
                                         className="px-3 py-1"
                                     />
                                 </div>

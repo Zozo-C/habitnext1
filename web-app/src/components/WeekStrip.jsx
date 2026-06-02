@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { getTodayStr } from '@/lib/utils';
+import { getTodayStr, isCompletedOnDate } from '@/lib/utils';
 import DayCell from './DayCell';
 
 // WeekStrip — the Mon-Sun date selector shown on the daily view.
@@ -19,6 +19,7 @@ import DayCell from './DayCell';
 //   selectedDate  — 'YYYY-MM-DD' currently-viewed day (controlled by parent)
 //   onSelectDate  — (dateStr) => void
 //   className     — extra classes for the outer wrapper (e.g. border, padding)
+//   tasks         — array of task objects for determining completion status
 
 const SWIPE_THRESHOLD = 45;
 const WEEK_DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']; // Mon..Sun
@@ -45,7 +46,7 @@ const computeWeek = (anchorDate) => {
     });
 };
 
-const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
+const WeekStrip = ({ selectedDate, onSelectDate, className = '', tasks = [] }) => {
     const [weekAnchor, setWeekAnchor] = useState(() => {
         const seed = selectedDate ? new Date(selectedDate) : new Date();
         return isNaN(seed.getTime()) ? new Date() : seed;
@@ -123,9 +124,12 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
 
             {weekCells.map((cell) => {
                 const isSelected = selectedDate === cell.dateStr;
-                // Determine habit status: done if selected, unstarted otherwise
-                // In the future, this could be connected to actual habit data
-                const habitStatus = isSelected ? 'done' : 'unstarted';
+                // Determine habit status based on actual task completion
+                // If any task is completed on this date, show 'done'; otherwise 'unstarted'
+                const anyTaskCompleted = tasks && tasks.length > 0
+                    ? tasks.some(task => isCompletedOnDate(task, cell.dateStr))
+                    : false;
+                const habitStatus = anyTaskCompleted ? 'done' : 'unstarted';
 
                 return (
                     <DayCell
