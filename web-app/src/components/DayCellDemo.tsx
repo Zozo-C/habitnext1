@@ -6,6 +6,7 @@ import DayCell from './DayCell';
 export default function DayCellDemo() {
   const [isSelected, setIsSelected] = useState(false);
   const [habitStatus, setHabitStatus] = useState<'empty' | 'unstarted' | 'inProgress' | 'done'>('unstarted');
+  const [progress, setProgress] = useState(0.5);
 
   const mockCell = {
     label: '一',
@@ -83,6 +84,24 @@ export default function DayCellDemo() {
             </div>
           </div>
 
+          {/* 進度控制 */}
+          {habitStatus === 'inProgress' && (
+            <div className="mb-8">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                進度: {Math.round(progress * 100)}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={progress}
+                onChange={(e) => setProgress(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          )}
+
           {/* 預覽 */}
           <div className="border-t pt-8">
             <p className="text-sm text-gray-600 mb-4">預覽</p>
@@ -91,6 +110,7 @@ export default function DayCellDemo() {
                 cell={mockCell}
                 isSelected={isSelected}
                 habitStatus={habitStatus}
+                progress={progress}
                 onSelect={(dateStr) => console.log('Selected:', dateStr)}
                 swipedRef={mockSwipedRef}
               />
@@ -114,6 +134,7 @@ export default function DayCellDemo() {
                         cell={mockCell}
                         isSelected={false}
                         habitStatus={status}
+                        progress={status === 'inProgress' ? 0.65 : 0}
                         onSelect={(dateStr) => console.log('Selected:', dateStr)}
                         swipedRef={mockSwipedRef}
                       />
@@ -135,6 +156,7 @@ export default function DayCellDemo() {
                         cell={mockCell}
                         isSelected={true}
                         habitStatus={status}
+                        progress={status === 'inProgress' ? 0.65 : 0}
                         onSelect={(dateStr) => console.log('Selected:', dateStr)}
                         swipedRef={mockSwipedRef}
                       />

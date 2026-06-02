@@ -10,10 +10,11 @@ import HabitDay from './HabitDay';
 //   cell              — { label, dateStr, dayNum, month, isToday }
 //   isSelected        — boolean, whether this day is currently selected
 //   habitStatus       — 'empty' | 'unstarted' | 'inProgress' | 'done'
+//   progress          — number (0-1), only used for inProgress status
 //   onSelect          — (dateStr) => void
 //   onSwipeDetected   — boolean ref to check if a swipe just occurred
 
-const DayCell = ({ cell, isSelected, habitStatus, onSelect, swipedRef }) => {
+const DayCell = ({ cell, isSelected, habitStatus, progress = 0, onSelect, swipedRef }) => {
   return (
     <button
       type="button"
@@ -28,6 +29,7 @@ const DayCell = ({ cell, isSelected, habitStatus, onSelect, swipedRef }) => {
       <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
       <HabitDay
         status={habitStatus}
+        progress={progress}
         dateStr={cell.dateStr}
       />
     </button>
