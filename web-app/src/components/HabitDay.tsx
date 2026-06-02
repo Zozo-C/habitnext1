@@ -96,7 +96,9 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
     );
   }
 
-  // inProgress 狀態 - 參照設計截圖
+  // inProgress 狀態 - 黃色實心圓，根據進度填滿
+  const fillPercentage = Math.max(0, Math.min(1, progress)) * 100;
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -105,31 +107,25 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
       className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
     >
       <div className="relative w-[52px] h-[52px]">
-        {/* 進度圓弧，旋轉讓起點在12點方向 */}
-        <svg width="52" height="52" viewBox="0 0 52 52" className="-rotate-90 absolute inset-0">
+        {/* 背景淺灰色圓 */}
+        <svg width="52" height="52" viewBox="0 0 52 52" className="absolute inset-0">
           <circle
             cx="26"
             cy="26"
-            r={radius}
-            fill="none"
-            stroke="#d1d5db"
-            strokeWidth="4"
-          />
-          <motion.circle
-            cx="26"
-            cy="26"
-            r={radius}
-            fill="none"
-            stroke={progress >= 1 ? '#4CAF50' : '#FFD54F'}
-            strokeWidth="4"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            r="24"
+            fill="#e5e7eb"
           />
         </svg>
-        {/* 日期文字獨立疊加，不受 SVG 旋轉影響 */}
+
+        {/* 黃色進度圓，使用 conic-gradient 效果 */}
+        <div
+          className="absolute inset-0 rounded-full overflow-hidden"
+          style={{
+            background: `conic-gradient(#FFD54F ${fillPercentage}%, #e5e7eb ${fillPercentage}%)`
+          }}
+        />
+
+        {/* 日期文字 */}
         <span className="absolute inset-0 flex items-center justify-center text-[16px] font-bold text-[#374151]">
           {displayText}
         </span>
