@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { getTodayStr } from '@/lib/utils';
-import HabitDay from './HabitDay';
+import DayCell from './DayCell';
 
 // WeekStrip — the Mon-Sun date selector shown on the daily view.
 //
@@ -128,23 +128,14 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
                 const habitStatus = isSelected ? 'done' : 'unstarted';
 
                 return (
-                    <button
-                        type="button"
+                    <DayCell
                         key={cell.dateStr}
-                        onClick={() => {
-                            if (swipedRef.current) return;
-                            onSelectDate?.(cell.dateStr);
-                        }}
-                        className={`flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors active:scale-95 ${
-                            isSelected ? 'border border-gray-300 rounded-lg' : ''
-                        }`}
-                    >
-                        <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
-                        <HabitDay
-                            status={habitStatus}
-                            dateStr={cell.dateStr}
-                        />
-                    </button>
+                        cell={cell}
+                        isSelected={isSelected}
+                        habitStatus={habitStatus}
+                        onSelect={onSelectDate}
+                        swipedRef={swipedRef}
+                    />
                 );
             })}
 
