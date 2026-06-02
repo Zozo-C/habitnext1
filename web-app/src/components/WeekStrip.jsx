@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { getTodayStr } from '@/lib/utils';
+import HabitDay from './HabitDay';
 
 // WeekStrip — the Mon-Sun date selector shown on the daily view.
 //
@@ -122,6 +123,10 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
 
             {weekCells.map((cell) => {
                 const isSelected = selectedDate === cell.dateStr;
+                // Determine habit status: done if selected, unstarted otherwise
+                // In the future, this could be connected to actual habit data
+                const habitStatus = isSelected ? 'done' : 'unstarted';
+
                 return (
                     <button
                         type="button"
@@ -130,20 +135,13 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
                             if (swipedRef.current) return;
                             onSelectDate?.(cell.dateStr);
                         }}
-                        className={`flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors ${
-                            isSelected
-                                ? 'text-emerald-600 font-bold'
-                                : cell.isToday
-                                    ? 'text-gray-700 font-medium hover:text-emerald-500'
-                                    : 'text-gray-400 font-medium hover:text-gray-600'
-                        }`}
+                        className="flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors active:scale-95"
                     >
-                        <span className="text-[11px] leading-none">{cell.label}</span>
-                        <span className="text-sm leading-tight mt-0.5">{cell.dayNum}</span>
-                        {cell.isToday && !isSelected && (
-                            <span className="absolute top-0.5 right-1/2 translate-x-3 w-1 h-1 bg-emerald-500 rounded-full" />
-                        )}
-                        {isSelected && <div className="absolute bottom-0 w-full h-[3px] bg-emerald-500 rounded-t-full" />}
+                        <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
+                        <HabitDay
+                            status={habitStatus}
+                            dateStr={cell.dateStr}
+                        />
                     </button>
                 );
             })}
