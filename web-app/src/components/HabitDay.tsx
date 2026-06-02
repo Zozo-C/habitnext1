@@ -34,8 +34,17 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="w-10 h-10 bg-[#5a5a5a] rounded-lg"
-      />
+        className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
+      >
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle
+            cx="20"
+            cy="20"
+            r="18"
+            fill="#e5e7eb"
+          />
+        </svg>
+      </motion.div>
     );
   }
 
