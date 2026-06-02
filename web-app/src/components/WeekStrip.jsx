@@ -135,7 +135,9 @@ const WeekStrip = ({ selectedDate, onSelectDate, className = '' }) => {
                             if (swipedRef.current) return;
                             onSelectDate?.(cell.dateStr);
                         }}
-                        className="flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors active:scale-95"
+                        className={`flex-1 flex flex-col items-center justify-center py-2 px-1 md:px-3 cursor-pointer relative transition-colors active:scale-95 ${
+                            isSelected ? 'border border-gray-300 rounded-lg' : ''
+                        }`}
                     >
                         <span className="text-[11px] leading-none text-gray-600 mb-1">{cell.label}</span>
                         <HabitDay
