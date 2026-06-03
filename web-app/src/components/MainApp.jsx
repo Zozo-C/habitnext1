@@ -577,25 +577,26 @@ const MainApp = () => {
             return next;
         });
         const collapseAt = setTimeout(() => {
-            // Phase 2 (t=700ms) — start the height-collapse animation. The
-            // check has now been visible ~700ms; the wrapper class transitions
+            // Phase 2 (t=700ms) — start the height-collapse animation + release
+            // from completingTaskIds so the task can move to completed section.
+            // The check has now been visible ~700ms; the wrapper class transitions
             // max-height + opacity over 300ms.
+            setCompletingTaskIds(prev => {
+                const next = new Set(prev);
+                next.delete(task.id);
+                return next;
+            });
             setExitingTaskIds(prev => {
                 const next = new Set(prev);
                 next.add(task.id);
                 return next;
             });
             const fetchAt = setTimeout(() => {
-                // Phase 3 (t=1000ms) — refresh from server and release both
-                // sets. The completed task now naturally sorts into the
+                // Phase 3 (t=1000ms) — refresh from server to confirm completion
+                // The completed task now naturally sorts into the
                 // (collapsed) 已完成 N 個 section.
                 if (user?.id) fetchTasks(user.id);
                 setExitingTaskIds(prev => {
-                    const next = new Set(prev);
-                    next.delete(task.id);
-                    return next;
-                });
-                setCompletingTaskIds(prev => {
                     const next = new Set(prev);
                     next.delete(task.id);
                     return next;
@@ -658,7 +659,7 @@ const MainApp = () => {
         setUndoToast({
             taskId: task.id,
             date,
-            message: `完成「${task.title}」`,
+            message: `完成「${task?.title || '任務'}」`,
         });
 
         // Show streak celebration on first completion of the day
