@@ -1,5 +1,4 @@
 "use client";
-import { useState } from 'react';
 import { Users } from 'lucide-react';
 import MyPlansView from './MyPlansView';
 import { explorePlanSections } from '@/data/mockData';
@@ -74,37 +73,11 @@ const ManageView = ({
     onTaskClick, onTaskDelete, onDeleteAssignment, onUpdateProgress,
     onOpenTemplateExplorer, onOpenFormModal,
 }) => {
-    const [activeTab, setActiveTab] = useState('mine');
-
     return (
-        <div className="p-4">
-            <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6">
-                {[['mine', '我的計劃'], ['explore', '探索計劃']].map(([key, label]) => (
-                    <button
-                        key={key}
-                        type="button"
-                        onClick={() => setActiveTab(key)}
-                        className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
-                            activeTab === key ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-gray-500'
-                        }`}
-                    >
-                        {label}
-                    </button>
-                ))}
-            </div>
-
-            {activeTab === 'mine' && (
-                <MyPlansView
-                    tasks={tasks}
-                    groupedTasks={groupedTasks}
-                    soloTasks={soloTasks}
-                    loading={loading}
-                    onTaskClick={onTaskClick}
-                />
-            )}
-
-            {activeTab === 'explore' && (
-                <div className="space-y-8 pb-24 md:pb-0">
+        <div className="space-y-6 pb-24 md:pb-0">
+            {/* Explore Section - Course Plans & Habits */}
+            <div className="px-4 pt-4">
+                <div className="space-y-4">
                     {explorePlanSections.map(section => (
                         <div key={section.id}>
                             <div className="mb-1">
@@ -120,7 +93,18 @@ const ManageView = ({
                         </div>
                     ))}
                 </div>
-            )}
+            </div>
+
+            {/* My Plans - Task Cards Grid */}
+            <div>
+                <MyPlansView
+                    tasks={tasks}
+                    groupedTasks={groupedTasks}
+                    soloTasks={soloTasks}
+                    loading={loading}
+                    onTaskClick={onTaskClick}
+                />
+            </div>
         </div>
     );
 };

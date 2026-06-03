@@ -49,8 +49,7 @@ const HabitCalendarCard = ({ task, year, month, todayStr, onClick }) => {
 
     return (
         <div
-            onClick={onClick}
-            className="bg-white rounded-2xl p-3 shadow-sm border border-gray-50 cursor-pointer active:scale-95 transition-transform"
+            className="bg-white rounded-2xl p-3 shadow-sm border border-gray-50"
         >
             <div className="flex items-start justify-between mb-2 gap-1">
                 <div className="flex items-center gap-1.5 min-w-0">
