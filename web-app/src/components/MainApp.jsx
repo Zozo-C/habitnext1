@@ -577,30 +577,31 @@ const MainApp = () => {
             return next;
         });
         const collapseAt = setTimeout(() => {
-            // Phase 2 (t=700ms) — start the height-collapse animation + release
-            // from completingTaskIds so the task can move to completed section.
-            // The check has now been visible ~700ms; the wrapper class transitions
-            // max-height + opacity over 300ms.
-            setCompletingTaskIds(prev => {
-                const next = new Set(prev);
-                next.delete(task.id);
-                return next;
-            });
+            // Phase 2 (t=700ms) — start the height-collapse animation. The
+            // check has now been visible ~700ms; the wrapper class transitions
+            // max-height + opacity over 300ms. KEEP task in completingTaskIds
+            // so it stays in incomplete bucket during collapse.
             setExitingTaskIds(prev => {
                 const next = new Set(prev);
                 next.add(task.id);
                 return next;
             });
             const fetchAt = setTimeout(() => {
-                // Phase 3 (t=1000ms) — refresh from server to confirm completion
-                // The completed task now naturally sorts into the
-                // (collapsed) 已完成 N 個 section.
-                if (user?.id) fetchTasks(user.id);
+                // Phase 3 (t=1000ms) — refresh from server. On re-fetch, the
+                // task returns from server with isCompleted=true, and since we
+                // remove it from completingTaskIds NOW, it naturally sorts into
+                // the (collapsed) 已完成 N 個 section on the next render.
+                setCompletingTaskIds(prev => {
+                    const next = new Set(prev);
+                    next.delete(task.id);
+                    return next;
+                });
                 setExitingTaskIds(prev => {
                     const next = new Set(prev);
                     next.delete(task.id);
                     return next;
                 });
+                if (user?.id) fetchTasks(user.id);
                 delete exitTimersRef.current[task.id];
             }, 300);
             exitTimersRef.current[task.id] = { collapseAt: null, fetchAt };
