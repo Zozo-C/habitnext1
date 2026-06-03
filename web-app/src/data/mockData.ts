@@ -160,6 +160,7 @@ export const mockTasks = [
       '2026-05-31': false,
       '2026-06-01': true,
       '2026-06-02': true,
+      '2026-06-03': false,
     },
   },
 
@@ -187,6 +188,7 @@ export const mockTasks = [
       '2026-05-31': { value: 5 },
       '2026-06-01': { value: 8 },
       '2026-06-02': { value: 6 },
+      '2026-06-03': { value: 0 },
     },
   },
 
@@ -218,6 +220,7 @@ export const mockTasks = [
       '2026-05-31': true,
       '2026-06-01': { subtaskCompletions: { 'sub-1': true, 'sub-2': true, 'sub-3': true } },
       '2026-06-02': true,
+      '2026-06-03': false,
     },
   },
 
@@ -253,6 +256,7 @@ export const mockTasks = [
       '2026-05-31': { value: 1 },
       '2026-06-01': { value: 0 },
       '2026-06-02': { value: 1 },
+      '2026-06-03': { value: 0 },
     },
   },
 
@@ -280,6 +284,7 @@ export const mockTasks = [
       '2026-05-31': { value: 20 },
       '2026-06-01': { value: 45 },
       '2026-06-02': { value: 28 },
+      '2026-06-03': { value: 0 },
     },
   },
 ];
