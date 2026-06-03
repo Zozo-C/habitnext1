@@ -137,12 +137,28 @@ const MainApp = () => {
     // 1. Check Auth on Load
     useEffect(() => {
         const storedUser = localStorage.getItem('habit_user');
+        // Check if demo mode is enabled via URL parameter
+        const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+        const isDemoMode = urlParams.get('demo') === 'true';
+
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
             fetchTasks(parsedUser.id);
             fetchAssignments(parsedUser.id);
             fetchCandidateCount(parsedUser.id);  // Slice L
+        } else if (isDemoMode) {
+            // Demo mode: use mock user and mock tasks
+            const demoUser = {
+                id: 'demo-user',
+                nickname: '設計測試者',
+                phone: '0000000000',
+                typeKey: 'daisy',
+                sleepTypeKey: 'stress',
+            };
+            setUser(demoUser);
+            setTasks(mockTasks);
+            setLoading(false);
         } else {
             setIsLoginModalOpen(true);
             setLoading(false);
@@ -1233,24 +1249,6 @@ const MainApp = () => {
                                         className="px-3 py-1"
                                     />
                                 </div>
-                                <div className="flex items-center justify-between gap-2 mb-3 px-1">
-                                    <span className="text-sm text-gray-600">
-                                        {isMenstrualMode
-                                            ? (menstrualExpired ? '生理期模式（超過 5 天）' : '生理期模式進行中')
-                                            : '生理期模式'}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleToggleMenstrual(!isMenstrualMode)}
-                                        className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
-                                            isMenstrualMode
-                                                ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                        }`}
-                                    >
-                                        {isMenstrualMode ? '結束生理期' : '我正在生理期'}
-                                    </button>
-                                </div>
                                 {showRecommendationCards && (
                                     <RecommendationCardRow
                                         onOpenTemplateExplorer={() => setIsTemplateExplorerOpen(true)}
@@ -1312,9 +1310,25 @@ const MainApp = () => {
                                 <div className="space-y-6">
                                     {/* Section 1: Scheduled tasks for selected date */}
                                     <div>
-                                        <h3 className="text-gray-800 font-bold text-lg mb-4 flex items-center gap-2">
-                                            <span className="w-1 h-5 bg-emerald-500 rounded-full"></span> {dailySectionLabel}
-                                        </h3>
+                                        <div className="flex items-center justify-between gap-2 mb-4">
+                                            <h3 className="text-gray-800 font-bold text-lg flex items-center gap-2">
+                                                <span className="w-1 h-5 bg-emerald-500 rounded-full"></span> {dailySectionLabel}
+                                                {isMenstrualMode && (
+                                                    <span className="text-sm font-semibold text-rose-600">生理期中</span>
+                                                )}
+                                            </h3>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleToggleMenstrual(!isMenstrualMode)}
+                                                className={`text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap transition-colors ${
+                                                    isMenstrualMode
+                                                        ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                }`}
+                                            >
+                                                {isMenstrualMode ? '結束生理期' : '我正在生理期'}
+                                            </button>
+                                        </div>
                                         <div className="space-y-3">
                                             {/* Incomplete tasks — prominent, always visible.
                                                 Each card is wrapped in an exit-animation div so
@@ -1406,6 +1420,45 @@ const MainApp = () => {
                         {currentView === 'manage' && (
                             <div className="p-4">
                                 <h2 className="text-2xl font-black text-gray-800 mb-6">計畫總覽</h2>
+
+                                {/* Explore Section */}
+                                <div className="mb-6 space-y-4">
+                                    {/* Main Card: Explore Plans */}
+                                    <button
+                                        onClick={() => setIsTemplateExplorerOpen(true)}
+                                        className="w-full bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-5 text-left hover:shadow-lg transition-shadow group"
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <BookOpen size={20} className="text-emerald-600 flex-shrink-0" />
+                                                    <h3 className="font-bold text-gray-800">課程計劃</h3>
+                                                </div>
+                                                <p className="text-sm text-gray-600 mb-3">與線上課程綁定，由講師精心設計的習慣組合</p>
+                                                <span className="text-xs font-bold text-emerald-600 group-hover:translate-x-1 inline-flex items-center gap-1 transition-transform">
+                                                    立即探索 →
+                                                </span>
+                                            </div>
+                                            <div className="text-3xl flex-shrink-0">🎓</div>
+                                        </div>
+                                    </button>
+
+                                    {/* Light Link: Explore Habits */}
+                                    <button
+                                        onClick={() => {
+                                            setEditingTask(null);
+                                            setIsLibraryModalOpen(true);
+                                        }}
+                                        className="w-full flex items-center justify-between p-3 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors group"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <Compass size={18} />
+                                            <span className="font-semibold">或快速探索習慣</span>
+                                        </div>
+                                        <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                                    </button>
+                                </div>
+
                                 {/* Tasks List */}
                                 <div className="space-y-4 pb-24 md:pb-0">
                                     {loading && <div className="text-center py-10 text-gray-400">載入中...</div>}
