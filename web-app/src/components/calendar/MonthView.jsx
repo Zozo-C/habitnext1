@@ -167,14 +167,14 @@ const MonthView = ({ currentDate, tasks, todayStr, onDateClick, onTaskClick }) =
                                                         ? undefined
                                                         : '#f3f4f6'
                                                 }}
-                                                title={task.title}
+                                                title={task.title || '(無標題)'}
                                             >
                                                 <span
                                                     className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.color?.replace('text-', 'bg-') || 'bg-gray-400'
                                                         }`}
                                                 ></span>
                                                 <span className={`truncate ${isCompleted ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                                                    {task.title}
+                                                    {task.title || '(無標題)'}
                                                 </span>
                                             </div>
                                         );

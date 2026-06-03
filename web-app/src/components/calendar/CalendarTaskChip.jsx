@@ -32,7 +32,7 @@ const CalendarTaskChip = ({ task, isCompleted, onClick, compact = false, showTim
                 ${isCompleted ? 'opacity-60 bg-gray-100' : bgClass}
                 ${compact ? 'text-[10px]' : 'text-xs'}
             `}
-            title={task.title}
+            title={task.title || '(無標題)'}
         >
             {/* Completion indicator */}
             {isCompleted && (
@@ -48,7 +48,7 @@ const CalendarTaskChip = ({ task, isCompleted, onClick, compact = false, showTim
 
             {/* Task title */}
             <span className={`truncate ${isCompleted ? 'line-through text-gray-400' : 'text-gray-700 font-medium'}`}>
-                {task.title}
+                {task.title || '(無標題)'}
             </span>
         </div>
     );

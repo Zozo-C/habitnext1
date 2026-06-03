@@ -55,7 +55,7 @@ const HabitCalendarCard = ({ task, year, month, todayStr, onClick }) => {
             <div className="flex items-start justify-between mb-2 gap-1">
                 <div className="flex items-center gap-1.5 min-w-0">
                     <IconRenderer category={task.category} size={16} className={config.type === 'emoji' ? 'text-base' : ''} />
-                    <p className="text-xs font-semibold text-[#1A1A1A] line-clamp-2 leading-tight">{task.title}</p>
+                    <p className="text-xs font-semibold text-[#1A1A1A] line-clamp-2 leading-tight">{task.title || '(無標題)'}</p>
                 </div>
                 {isFullyDone && <span className="text-xs shrink-0">✅</span>}
             </div>

@@ -108,7 +108,7 @@ const TaskDetailModal = ({ isOpen, onClose, task, onEdit, onUpdate, initialDate,
                                 <span className="text-gray-300">→</span>
                             </p>
                         )}
-                        <h2 className="text-2xl font-black text-gray-800 text-center mb-2">{task.title}</h2>
+                        <h2 className="text-2xl font-black text-gray-800 text-center mb-2">{task.title || '(無標題)'}</h2>
                         <p className="text-gray-500 text-center text-sm px-4">{task.details || '這個習慣沒有詳細說明，但持續做就對了！'}</p>
                     </div>
 

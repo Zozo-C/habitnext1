@@ -186,7 +186,7 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                             </p>
                         )}
                         <h3 className="font-bold text-sm text-gray-800">
-                            {task.title}
+                            {task.title || '(無標題)'}
                         </h3>
                         <p className="text-xs text-gray-400 line-clamp-1">
                             {isPeriod ? (task.frequency === 'weekly' ? '本週目標' : '本月目標') : (task.details || '無詳細說明')}
