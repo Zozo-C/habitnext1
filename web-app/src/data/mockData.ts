@@ -242,7 +242,7 @@ export const mockTasks = [
       interval: 1,
       weekDays: [1, 2, 3, 4, 5, 6, 0],
       mode: 'period_count',
-      period_count: 3,
+      periodTarget: 3,
       period_unit: 'week',
     },
     reminder: { enabled: true, time: '18:00' },
