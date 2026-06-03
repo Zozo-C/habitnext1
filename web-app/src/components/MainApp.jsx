@@ -189,6 +189,7 @@ const MainApp = () => {
             }
 
             // Transform history array to object map for frontend compatibility
+            // Also merge with existing tasks' history to preserve unsaved local changes
             const formattedTasks = data.map(t => {
                 const historyMap = {};
                 const dailyProgressMap = {};
@@ -223,7 +224,15 @@ const MainApp = () => {
                 });
 
                 // Use existing history if already formatted as object
-                const finalHistory = Array.isArray(t.history) ? historyMap : t.history;
+                let finalHistory = Array.isArray(t.history) ? historyMap : t.history;
+
+                // IMPORTANT: Merge with existing task history to preserve local changes
+                // that haven't been synced to server yet (e.g., just-completed tasks)
+                const existingTask = tasks.find(et => et.id === t.id);
+                if (existingTask && existingTask.history) {
+                    finalHistory = { ...finalHistory, ...existingTask.history };
+                }
+
                 return { ...t, history: finalHistory, dailyProgress: dailyProgressMap, locationByDate, photoByDate };
             });
             setTasks(formattedTasks);
