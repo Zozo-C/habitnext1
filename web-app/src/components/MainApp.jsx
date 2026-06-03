@@ -25,7 +25,7 @@ import { visibleSubtasks, computeChecklistValue } from '@/lib/subtasks';
 import { mockTasks, explorePlanSections } from '@/data/mockData';
 import PlanGroup from './PlanGroup';
 import TemplateExplorer from './TemplateExplorer';
-import CourseExplorer from './CourseExplorer';
+// import CourseExplorer from './CourseExplorer';
 import ProfileModal from './ProfileModal';
 import Avatar from './Avatar';
 import AspirationPicker from './AspirationPicker';
@@ -1337,10 +1337,10 @@ const MainApp = () => {
                 initialTemplate={initialTemplateForExplorer}
             />
 
-            <CourseExplorer
+            {/* <CourseExplorer
                 isOpen={isCoursesOpen}
                 onClose={() => setIsCoursesOpen(false)}
-            />
+            /> */}
 
             <TaskFormModal
                 isOpen={isFormModalOpen}
