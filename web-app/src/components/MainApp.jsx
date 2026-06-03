@@ -33,6 +33,7 @@ import FocusMapModal from './FocusMapModal';
 import JourneyView from './journey/JourneyView';
 import AchievementCenter from './AchievementCenter';
 import RecommendationCardRow from './RecommendationCardRow';
+import StreakCelebration from './StreakCelebration';
 
 // StatsView is dynamically imported to keep recharts (~96kb gzip) off the
 // `/` route's First Load JS — it only loads when the user opens the stats tab.
@@ -128,6 +129,10 @@ const MainApp = () => {
 
     // Recommendation card visibility
     const [showRecommendationCards, setShowRecommendationCards] = useState(true);
+
+    // Streak celebration modal
+    const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+    const [streakCount, setStreakCount] = useState(0);
 
     // 1. Check Auth on Load
     useEffect(() => {
@@ -655,6 +660,50 @@ const MainApp = () => {
             date,
             message: `完成「${task.title}」`,
         });
+
+        // Show streak celebration on first completion of the day
+        // Schedule to trigger after handleUpdateProgress updates state
+        setTimeout(() => {
+            const todayStr = getTodayStr();
+            // Check if today has exactly one completed task now (the one we just completed)
+            const completedTodayCount = tasks.filter(t => isCompletedOnDate(t, todayStr)).length;
+            if (completedTodayCount === 1) {
+                const newStreak = calculateStreak();
+                setStreakCount(newStreak);
+                setShowStreakCelebration(true);
+                // Auto-close after 4 seconds
+                setTimeout(() => setShowStreakCelebration(false), 4000);
+            }
+        }, 100);
+    };
+
+    // Calculate current streak — count consecutive completed days from today backward.
+    // Returns the number of consecutive days (including today) that have at least
+    // one completed task.
+    const calculateStreak = () => {
+        if (tasks.length === 0) return 0;
+
+        let streak = 0;
+        const currentDate = new Date();
+
+        // Check from today backwards
+        for (let i = 0; i < 365; i++) {
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(checkDate.getDate() - i);
+            const dateStr = checkDate.toISOString().split('T')[0];
+
+            // Check if at least one task is completed on this date
+            const hasCompletedTask = tasks.some(task => isCompletedOnDate(task, dateStr));
+
+            if (hasCompletedTask) {
+                streak++;
+            } else if (i > 0) {
+                // Stop counting if we hit a gap (but allow today)
+                break;
+            }
+        }
+
+        return streak;
     };
 
     // Clean up timers + toast on unmount.
@@ -1583,6 +1632,13 @@ const MainApp = () => {
             >
                 <span className="text-2xl text-white leading-none">+</span>
             </button>
+
+            {/* Streak Celebration Modal — triggered on first task completion of the day */}
+            <StreakCelebration
+                streak={streakCount}
+                isVisible={showStreakCelebration}
+                onClose={() => setShowStreakCelebration(false)}
+            />
         </>
     );
 };
