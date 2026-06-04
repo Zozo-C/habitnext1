@@ -1,14 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Users, Calendar } from 'lucide-react';
 import { coursePlans } from '@/data/mockData';
+import StartDateModal from './StartDateModal';
 
 const PlanDetailModal = ({ isOpen, planId, onClose, onJoin }) => {
+  const [showStartDateModal, setShowStartDateModal] = useState(false);
+
   if (!isOpen || !planId) return null;
 
   const plan = coursePlans[planId];
   if (!plan) return null;
+
+  const handleJoinClick = () => {
+    setShowStartDateModal(true);
+  };
+
+  const handleConfirmDate = (startDate) => {
+    console.log('確認加入計劃:', planId, '開始日期:', startDate);
+    setShowStartDateModal(false);
+    onJoin(planId, startDate);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black bg-opacity-40 p-4">
@@ -86,13 +99,21 @@ const PlanDetailModal = ({ isOpen, planId, onClose, onJoin }) => {
         {/* Footer - Join Button */}
         <div className="border-t border-gray-100 p-6 bg-white">
           <button
-            onClick={() => onJoin(planId)}
+            onClick={handleJoinClick}
             className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
           >
             <Calendar size={18} />
             加入計劃
           </button>
         </div>
+
+        {/* Start Date Modal */}
+        <StartDateModal
+          isOpen={showStartDateModal}
+          planName={plan.name}
+          onClose={() => setShowStartDateModal(false)}
+          onConfirm={handleConfirmDate}
+        />
       </div>
     </div>
   );

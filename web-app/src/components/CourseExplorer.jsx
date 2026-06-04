@@ -64,10 +64,10 @@ const CourseExplorer = ({ isOpen, onClose }) => {
     setSelectedPlanId(planId);
   };
 
-  const handleJoinPlan = (planId) => {
-    console.log('加入計劃:', planId);
+  const handleJoinPlan = (planId, startDate) => {
+    console.log('確認加入計劃:', planId, '開始日期:', startDate);
+    // TODO: 生成該計劃的所有任務到用戶的任務列表
     setSelectedPlanId(null);
-    // TODO: 打開開始日期選擇對話框
   };
 
   return (
