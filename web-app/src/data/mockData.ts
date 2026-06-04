@@ -20,10 +20,10 @@ export const explorePlanSections = [
     subtitle: '依睡眠困擾分型，以科學方法重建睡眠節律。',
     quizCard: { themeColor: '#169E6B', tag: '睡眠處方', title: '還不知道自己是哪種型嗎？', description: '填寫問卷，找到最適合你的睡眠處方。', imageUrl: '/images/course-sleep.svg' },
     templates: [
-      { id: 'stress-sleep',    name: '壓力型睡眠處方',     tag: '睡眠', color: '#F0EDF5', accent: '#5B3FA0', emoji: '😵‍💫', by: 'HabitNext 系統', description: '大腦過度活躍、交感神經亢奮，明明很累卻睡不著，睡前思緒停不下來。', count: 4 },
-      { id: 'rhythm-sleep',    name: '節律型睡眠處方',     tag: '睡眠', color: '#EDF2F6', accent: '#4C5BA0', emoji: '🌙', by: 'HabitNext 系統', description: '生理時鐘延遲或混亂，不是睡不著，而是睡錯時間；晚睡晚起、週末補眠惡化節律。', count: 6 },
-      { id: 'metabolic-sleep', name: '代謝失衡型睡眠處方',  tag: '睡眠', color: '#F5F0E8', accent: '#5B4FB0', emoji: '⏰', by: 'HabitNext 系統', description: '夜間血糖波動、低血糖反應導致半夜醒來、睡眠不穩、醒來依然疲憊。', count: 3 },
-      { id: 'hormone-sleep',   name: '荷爾蒙波動型睡眠處方', tag: '睡眠', color: '#F3F0ED', accent: '#6B4FB0', emoji: '🔄', by: 'HabitNext 系統', description: '荷爾蒙波動影響體溫調節、情緒與睡眠深度，常見於經前、更年期、產後。', count: 2 },
+      { id: 'stress-sleep',    name: '壓力型睡眠處方',     tag: '睡眠', color: '#F0EDF5', accent: '#1E3A8A', emoji: '😵‍💫', by: 'HabitNext 系統', description: '大腦過度活躍、交感神經亢奮，明明很累卻睡不著，睡前思緒停不下來。', count: 4 },
+      { id: 'rhythm-sleep',    name: '節律型睡眠處方',     tag: '睡眠', color: '#EDF2F6', accent: '#3B5BA0', emoji: '🌙', by: 'HabitNext 系統', description: '生理時鐘延遲或混亂，不是睡不著，而是睡錯時間；晚睡晚起、週末補眠惡化節律。', count: 6 },
+      { id: 'metabolic-sleep', name: '代謝失衡型睡眠處方',  tag: '睡眠', color: '#F5F0E8', accent: '#5B3FB0', emoji: '⏰', by: 'HabitNext 系統', description: '夜間血糖波動、低血糖反應導致半夜醒來、睡眠不穩、醒來依然疲憊。', count: 3 },
+      { id: 'hormone-sleep',   name: '荷爾蒙波動型睡眠處方', tag: '睡眠', color: '#F3F0ED', accent: '#6D28D9', emoji: '🔄', by: 'HabitNext 系統', description: '荷爾蒙波動影響體溫調節、情緒與睡眠深度，常見於經前、更年期、產後。', count: 2 },
     ],
   },
 ];
