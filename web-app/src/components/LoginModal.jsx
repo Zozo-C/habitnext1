@@ -72,46 +72,31 @@ const LoginModal = ({ isOpen, onLogin }) => {
         setLoading(true);
         setError('');
 
+        // Demo mode: verify code must be 8888
+        if (verificationCode !== '8888') {
+            setError('驗證碼錯誤，Demo 模式請輸入 8888');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phone,
-                    countryCode,
-                    password,
-                    verificationCode
-                })
-            });
+            // In demo mode, directly create user object and login
+            // Skip backend verification
+            const userData = {
+                id: `demo-user-${Date.now()}`,
+                phone: `${countryCode}${phone}`,
+                nickname: `User-${phone.slice(-4)}`,
+                typeKey: null,
+                sleepTypeKey: null,
+                trackLocation: false,
+                avatar: 'sunrise'
+            };
 
-            const data = await res.json();
-
-            if (res.ok) {
-                // Auto login after register
-                // Or just separate login?
-                // data contains { success: true, userId, nickname }
-                // Let's call login or simulate login.
-                // For simplicity, let's just call login API immediately with password.
-                const loginRes = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, password })
-                });
-
-                if (loginRes.ok) {
-                    const userData = await loginRes.json();
-                    onLogin(userData);
-                    resetForm();
-                } else {
-                    // Should not happen if register success
-                    setMode('login');
-                    setError('註冊成功，請登入');
-                }
-            } else {
-                setError(data.error || '註冊失敗');
-            }
+            // Call onLogin with mock user data
+            onLogin(userData);
+            resetForm();
         } catch (err) {
-            setError('網路連線錯誤');
+            setError('登入失敗，請重試');
         } finally {
             setLoading(false);
         }
