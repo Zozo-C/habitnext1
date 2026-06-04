@@ -5,24 +5,29 @@ import { X, Users } from 'lucide-react';
 import { explorePlanSections } from '@/data/mockData';
 import PlanDetailModal from './PlanDetailModal';
 
-const CourseCard = ({ template, onButtonClick }) => {
+const CourseCard = ({ template, onButtonClick, index = 0 }) => {
   return (
     <button
       onClick={onButtonClick}
-      className="flex-shrink-0 w-56 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-100/60 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 hover:-translate-y-1"
+      className="flex-shrink-0 w-56 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-100/60 shadow-lg md:hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 md:hover:-translate-y-1 animate-slide-in-up"
+      style={{
+        animationDelay: `${index * 100}ms`,
+      }}
     >
       {/* Color header with gradient overlay */}
       <div
-        className="h-20 flex items-center justify-center text-4xl font-bold text-white relative overflow-hidden"
+        className="h-20 flex items-center justify-center text-4xl font-bold text-white relative overflow-hidden group/header"
         style={{
           backgroundColor: template.accent,
           backgroundImage: `linear-gradient(135deg, ${template.accent} 0%, ${template.accent}dd 100%)`
         }}
       >
-        <div className="absolute inset-0 opacity-10" style={{
+        {/* Light reflection effect */}
+        <div className="absolute inset-0 opacity-10 group-active/header:opacity-20 transition-opacity" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, white, transparent)',
         }}></div>
-        <span className="relative drop-shadow-lg">{template.emoji}</span>
+        {/* Emoji with enhanced drop shadow */}
+        <span className="relative drop-shadow-lg text-4xl animate-bounce-gentle">{template.emoji}</span>
       </div>
 
       {/* Content */}
@@ -63,7 +68,7 @@ const CourseCard = ({ template, onButtonClick }) => {
             e.stopPropagation();
             onButtonClick();
           }}
-          className="w-full mt-3 py-3 rounded-2xl font-semibold text-sm text-white transition-all duration-300 shadow-md hover:shadow-lg active:shadow-sm transform hover:scale-105 active:scale-95"
+          className="w-full mt-3 py-3 rounded-2xl font-semibold text-sm text-white transition-all duration-200 shadow-md md:hover:shadow-lg active:shadow-sm md:hover:scale-105 active:scale-95 active:opacity-90"
           style={{
             backgroundColor: template.accent,
             backgroundImage: `linear-gradient(180deg, ${template.accent}ee 0%, ${template.accent} 100%)`,
@@ -130,11 +135,12 @@ const CourseExplorer = ({ isOpen, onClose, onJoinPlan }) => {
 
                 {/* Horizontal scroll cards */}
                 <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:-mx-6 md:px-6 no-scrollbar">
-                  {section.templates.map(template => (
+                  {section.templates.map((template, idx) => (
                     <CourseCard
                       key={template.id}
                       template={template}
                       onButtonClick={() => handlePlanClick(template.id)}
+                      index={idx}
                     />
                   ))}
                 </div>
