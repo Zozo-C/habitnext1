@@ -7,10 +7,10 @@ export const explorePlanSections = [
     subtitle: '女性依體質分型，14 天分階段任務，跟著週期長出自己的花。',
     quizCard: { themeColor: '#FF6B6B', tag: '花朵型', title: '還不知道自己是哪種型嗎？', description: '填寫問卷，找到最適合你的花朵型計畫。', imageUrl: '/images/course-flower.svg' },
     templates: [
-      { id: 'sunflower', name: '向日葵型小課程', tag: '花朵型', color: '#FFF3CD', accent: '#F59E0B', emoji: '🌻', by: 'HabitNext 系統', description: '你像向日葵一樣會隨著能量消長與代謝節律而轉動，血糖波動大、容易餓、飯後想睡是常見困擾。', count: 3 },
-      { id: 'orchid',    name: '蘭花型小課程',   tag: '花朵型', color: '#FCE4EC', accent: '#E91E8C', emoji: '🌸', by: 'HabitNext 系統', description: '你像蘭花一樣對環境變化比較敏感，需要穩定以及規律來支撐，當作息混亂壓力來襲時容易失衡。', count: 2 },
-      { id: 'rose',      name: '玫瑰型小課程',   tag: '花朵型', color: '#FCE4EC', accent: '#F06292', emoji: '🌹', by: 'HabitNext 系統', description: '你像玫瑰一樣有盛開與含苞的節奏，身體對週期變化比較敏銳，尤其是情緒與體力的起伏。', count: 5 },
-      { id: 'daisy',     name: '雛菊型小課程',   tag: '花朵型', color: '#E8F5E9', accent: '#4CAF50', emoji: '🌼', by: 'HabitNext 系統', description: '你像雛菊一樣穩定、日常、自然且平衡。大多數時候沒有特別明顯的不適，但這不代表不需要照顧自己。', count: 7 },
+      { id: 'sunflower', name: '向日葵型小課程', tag: '花朵型', color: '#FFF3CD', accent: '#F59E0B', emoji: '🌻', imageUrl: '/flowers/sunflower.svg', by: 'HabitNext 系統', description: '你像向日葵一樣會隨著能量消長與代謝節律而轉動，血糖波動大、容易餓、飯後想睡是常見困擾。', count: 3 },
+      { id: 'orchid',    name: '蘭花型小課程',   tag: '花朵型', color: '#FCE4EC', accent: '#E91E8C', emoji: '🌸', imageUrl: '/flowers/orchid.svg', by: 'HabitNext 系統', description: '你像蘭花一樣對環境變化比較敏感，需要穩定以及規律來支撐，當作息混亂壓力來襲時容易失衡。', count: 2 },
+      { id: 'rose',      name: '玫瑰型小課程',   tag: '花朵型', color: '#FCE4EC', accent: '#F06292', emoji: '🌹', imageUrl: '/flowers/rose.svg', by: 'HabitNext 系統', description: '你像玫瑰一樣有盛開與含苞的節奏，身體對週期變化比較敏銳，尤其是情緒與體力的起伏。', count: 5 },
+      { id: 'daisy',     name: '雛菊型小課程',   tag: '花朵型', color: '#E8F5E9', accent: '#4CAF50', emoji: '🌼', imageUrl: '/flowers/daisy.svg', by: 'HabitNext 系統', description: '你像雛菊一樣穩定、日常、自然且平衡。大多數時候沒有特別明顯的不適，但這不代表不需要照顧自己。', count: 7 },
     ],
   },
   {

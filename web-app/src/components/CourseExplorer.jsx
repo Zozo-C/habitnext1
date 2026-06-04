@@ -16,7 +16,7 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
     >
       {/* Color header with gradient overlay */}
       <div
-        className="h-20 flex items-center justify-center text-4xl font-bold text-white relative overflow-hidden group/header"
+        className="h-20 flex items-center justify-center relative overflow-hidden group/header bg-gradient-to-br"
         style={{
           backgroundColor: template.accent,
           backgroundImage: `linear-gradient(135deg, ${template.accent} 0%, ${template.accent}dd 100%)`
@@ -26,8 +26,28 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
         <div className="absolute inset-0 opacity-10 group-active/header:opacity-20 transition-opacity" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, white, transparent)',
         }}></div>
-        {/* Emoji with enhanced drop shadow */}
-        <span className="relative drop-shadow-lg text-4xl animate-bounce-gentle">{template.emoji}</span>
+
+        {/* SVG Image or Emoji fallback */}
+        {template.imageUrl ? (
+          <img
+            src={template.imageUrl}
+            alt={template.name}
+            className="relative w-16 h-16 object-contain animate-bounce-gentle drop-shadow-lg"
+            onError={(e) => {
+              // Fallback to emoji if SVG fails to load
+              e.target.style.display = 'none';
+              e.target.nextElementSibling.style.display = 'inline';
+            }}
+          />
+        ) : null}
+
+        {/* Emoji fallback */}
+        <span
+          className="relative drop-shadow-lg text-4xl animate-bounce-gentle"
+          style={{ display: template.imageUrl ? 'none' : 'inline' }}
+        >
+          {template.emoji}
+        </span>
       </div>
 
       {/* Content */}
