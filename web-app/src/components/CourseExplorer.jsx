@@ -1,12 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Users } from 'lucide-react';
 import { explorePlanSections } from '@/data/mockData';
+import PlanDetailModal from './PlanDetailModal';
 
 const CourseCard = ({ template, onButtonClick }) => {
   return (
-    <div className="flex-shrink-0 w-56 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+    <button
+      onClick={onButtonClick}
+      className="flex-shrink-0 w-56 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col text-left cursor-pointer active:scale-95"
+    >
       {/* Color header */}
       <div
         className="h-16 flex items-center justify-center text-2xl font-bold text-white"
@@ -40,20 +44,31 @@ const CourseCard = ({ template, onButtonClick }) => {
         </div>
 
         {/* Button */}
-        <button
-          onClick={onButtonClick}
-          className="w-full py-2 rounded-lg font-semibold text-sm text-white transition-all hover:opacity-90 active:scale-95"
+        <div
+          className="w-full py-2 rounded-lg font-semibold text-sm text-white transition-all"
           style={{ backgroundColor: template.accent }}
         >
-          加入計劃
-        </button>
+          查看詳情
+        </div>
       </div>
-    </div>
+    </button>
   );
 };
 
 const CourseExplorer = ({ isOpen, onClose }) => {
+  const [selectedPlanId, setSelectedPlanId] = useState(null);
+
   if (!isOpen) return null;
+
+  const handlePlanClick = (planId) => {
+    setSelectedPlanId(planId);
+  };
+
+  const handleJoinPlan = (planId) => {
+    console.log('加入計劃:', planId);
+    setSelectedPlanId(null);
+    // TODO: 打開開始日期選擇對話框
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black bg-opacity-40">
@@ -89,9 +104,7 @@ const CourseExplorer = ({ isOpen, onClose }) => {
                     <CourseCard
                       key={template.id}
                       template={template}
-                      onButtonClick={() => {
-                        console.log('加入課程:', template.id);
-                      }}
+                      onButtonClick={() => handlePlanClick(template.id)}
                     />
                   ))}
                 </div>
@@ -100,6 +113,14 @@ const CourseExplorer = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
+
+      {/* Plan Detail Modal */}
+      <PlanDetailModal
+        isOpen={!!selectedPlanId}
+        planId={selectedPlanId}
+        onClose={() => setSelectedPlanId(null)}
+        onJoin={handleJoinPlan}
+      />
     </div>
   );
 };
