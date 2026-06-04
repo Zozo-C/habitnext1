@@ -9,38 +9,27 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
   return (
     <button
       onClick={onButtonClick}
-      className="flex-shrink-0 w-56 bg-white/85 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-200/50 shadow-lg md:hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 md:hover:-translate-y-1 animate-slide-in-up"
+      className="flex-shrink-0 w-56 bg-white/85 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-200/50 shadow-lg md:hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 md:hover:-translate-y-1 animate-slide-in-up relative"
       style={{
         animationDelay: `${index * 100}ms`,
       }}
     >
-      {/* Simple header with just small image */}
-      <div className="h-24 flex items-center justify-center relative">
-        {/* SVG Image or Emoji fallback */}
+      {/* Decorative flower image - bottom right corner */}
+      <div className="absolute bottom-0 right-0 w-32 h-32 opacity-20 pointer-events-none">
         {template.imageUrl ? (
           <img
             src={template.imageUrl}
-            alt={template.name}
-            className="w-14 h-14 object-contain animate-bounce-gentle drop-shadow-sm"
+            alt=""
+            className="w-full h-full object-contain"
             onError={(e) => {
-              // Fallback to emoji if SVG fails to load
               e.target.style.display = 'none';
-              e.target.nextElementSibling.style.display = 'inline';
             }}
           />
         ) : null}
-
-        {/* Emoji fallback */}
-        <span
-          className="text-4xl animate-bounce-gentle"
-          style={{ display: template.imageUrl ? 'none' : 'inline' }}
-        >
-          {template.emoji}
-        </span>
       </div>
 
-      {/* Content */}
-      <div className="px-5 pb-5 flex flex-col flex-1 gap-2">
+      {/* Content - with relative positioning to appear above decorative image */}
+      <div className="px-5 py-5 flex flex-col flex-1 gap-2 relative z-10">
         {/* Tag - subtle style */}
         <div
           className="text-xs font-semibold mb-2 px-3 py-1 rounded-full inline-block w-fit text-white"
