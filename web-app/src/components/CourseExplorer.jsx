@@ -9,30 +9,19 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
   return (
     <button
       onClick={onButtonClick}
-      className="flex-shrink-0 w-56 bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-100/60 shadow-lg md:hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 md:hover:-translate-y-1 animate-slide-in-up"
+      className="flex-shrink-0 w-56 bg-white/85 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-200/50 shadow-lg md:hover:shadow-2xl transition-all duration-300 flex flex-col text-left cursor-pointer active:scale-95 md:hover:-translate-y-1 animate-slide-in-up"
       style={{
         animationDelay: `${index * 100}ms`,
       }}
     >
-      {/* Color header with gradient overlay */}
-      <div
-        className="h-20 flex items-center justify-center relative overflow-hidden group/header bg-gradient-to-br"
-        style={{
-          backgroundColor: template.accent,
-          backgroundImage: `linear-gradient(135deg, ${template.accent} 0%, ${template.accent}dd 100%)`
-        }}
-      >
-        {/* Light reflection effect */}
-        <div className="absolute inset-0 opacity-10 group-active/header:opacity-20 transition-opacity" style={{
-          backgroundImage: 'radial-gradient(circle at 20% 50%, white, transparent)',
-        }}></div>
-
+      {/* Simple header with just small image */}
+      <div className="h-24 flex items-center justify-center relative">
         {/* SVG Image or Emoji fallback */}
         {template.imageUrl ? (
           <img
             src={template.imageUrl}
             alt={template.name}
-            className="relative w-16 h-16 object-contain animate-bounce-gentle drop-shadow-lg"
+            className="w-14 h-14 object-contain animate-bounce-gentle drop-shadow-sm"
             onError={(e) => {
               // Fallback to emoji if SVG fails to load
               e.target.style.display = 'none';
@@ -43,7 +32,7 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
 
         {/* Emoji fallback */}
         <span
-          className="relative drop-shadow-lg text-4xl animate-bounce-gentle"
+          className="text-4xl animate-bounce-gentle"
           style={{ display: template.imageUrl ? 'none' : 'inline' }}
         >
           {template.emoji}
@@ -51,13 +40,13 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1 gap-2">
-        {/* Tag */}
+      <div className="px-5 pb-5 flex flex-col flex-1 gap-2">
+        {/* Tag - subtle style */}
         <div
-          className="text-xs font-semibold mb-1 px-3 py-1.5 rounded-full inline-block w-fit text-white shadow-md"
+          className="text-xs font-semibold mb-2 px-3 py-1 rounded-full inline-block w-fit text-white"
           style={{
             backgroundColor: template.accent,
-            opacity: 0.95,
+            opacity: 0.85,
           }}
         >
           {template.tag}
@@ -74,11 +63,11 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
         </p>
 
         {/* Creator and count */}
-        <div className="text-xs text-gray-500 space-y-1 py-2 border-t border-gray-100">
-          <p className="font-medium">👤 {template.by}</p>
+        <div className="text-xs text-gray-500 space-y-1 pt-2 border-t border-gray-100/60">
+          <p className="text-gray-600">👤 {template.by}</p>
           <div className="flex items-center gap-1.5 text-gray-600">
-            <Users size={13} className="text-gray-400" />
-            <span className="font-medium">{template.count} 人已加入</span>
+            <Users size={12} className="text-gray-400" />
+            <span>{template.count} 人已加入</span>
           </div>
         </div>
 
@@ -88,10 +77,9 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
             e.stopPropagation();
             onButtonClick();
           }}
-          className="w-full mt-3 py-3 rounded-2xl font-semibold text-sm text-white transition-all duration-200 shadow-md md:hover:shadow-lg active:shadow-sm md:hover:scale-105 active:scale-95 active:opacity-90"
+          className="w-full mt-2 py-2.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 md:hover:shadow-md active:scale-95 active:opacity-90"
           style={{
             backgroundColor: template.accent,
-            backgroundImage: `linear-gradient(180deg, ${template.accent}ee 0%, ${template.accent} 100%)`,
           }}
         >
           查看詳情
@@ -120,12 +108,12 @@ const CourseExplorer = ({ isOpen, onClose, onJoinPlan }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white/95 backdrop-blur-md rounded-t-3xl md:rounded-3xl w-full md:w-[90%] max-w-4xl max-h-[90vh] flex flex-col animate-slide-up md:animate-fade-in-up shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-gray-50/95 backdrop-blur-md rounded-t-3xl md:rounded-3xl w-full md:w-[90%] max-w-4xl max-h-[90vh] flex flex-col animate-slide-up md:animate-fade-in-up shadow-2xl">
         {/* Header with subtle gradient background */}
-        <div className="sticky top-0 bg-gradient-to-r from-white/90 to-white border-b border-gray-100/60 flex items-center justify-between p-4 md:p-6 backdrop-blur-sm">
+        <div className="sticky top-0 bg-gradient-to-r from-gray-50/90 to-gray-50 border-b border-gray-200/40 flex items-center justify-between p-4 md:p-6 backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-lg">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-lg">
               ✨
             </div>
             <h2 className="text-lg md:text-2xl font-bold text-gray-900">探索課程計劃</h2>
@@ -140,17 +128,17 @@ const CourseExplorer = ({ isOpen, onClose, onJoinPlan }) => {
         </div>
 
         {/* Content - Horizontal scroll sections */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-8">
-          <div className="space-y-10">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+          <div className="space-y-8">
             {explorePlanSections.map(section => (
               <div key={section.id} className="group">
                 {/* Section header */}
-                <div className="mb-6 pb-2 border-b border-gray-100/60">
-                  <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors duration-200">
-                    <span className="text-2xl mr-2">{section.emoji}</span>
+                <div className="mb-5 pb-3 border-b border-gray-100/50">
+                  <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1">
+                    <span className="text-xl mr-2">{section.emoji}</span>
                     {section.category}
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-500 font-medium leading-relaxed">{section.subtitle}</p>
+                  <p className="text-xs md:text-sm text-gray-500 leading-relaxed">{section.subtitle}</p>
                 </div>
 
                 {/* Horizontal scroll cards */}
