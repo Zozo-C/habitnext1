@@ -7,7 +7,9 @@ import {
     findDuplicateAspiration,
     getPersonalisedPresets,
 } from '@/lib/aspirations';
-import PRESET_ASPIRATIONS from '../../prisma/seed/preset-aspirations.json';
+
+// PRESET_ASPIRATIONS moved to mockData for demo mode (Prisma removed)
+const PRESET_ASPIRATIONS = [];
 
 // AspirationPicker — Slice K, Step 1 of the new-add flow.
 // Spec: docs/superpowers/specs/2026-05-23-slice-K-aspiration-system-design.md §3.2
