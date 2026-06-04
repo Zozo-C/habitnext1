@@ -13,6 +13,7 @@ const ManageView = ({
   onUpdateProgress,
   onOpenCourses,
   onOpenLibrary,
+  onOpenTemplateExplorer = () => {},
 }) => {
   const activeTasks = tasks.filter(t => !t.status || t.status === 'active');
   const todayStr = getTodayStr();
