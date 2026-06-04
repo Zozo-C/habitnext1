@@ -63,7 +63,7 @@ const HabitCalendarCard = ({ task, year, month, todayStr, onClick }) => {
             <div className="grid grid-cols-7 gap-[2px] mb-1">
                 {['一','二','三','四','五','六','日'].map(d => (
                     <div key={d} className="flex items-center justify-center">
-                        <span className="text-[6px] text-gray-300 font-medium">{d}</span>
+                        <span className="text-[8px] text-gray-400 font-medium">{d}</span>
                     </div>
                 ))}
             </div>
@@ -79,8 +79,8 @@ const HabitCalendarCard = ({ task, year, month, todayStr, onClick }) => {
                         style={cell?.isDone ? { backgroundColor: doneColor } : undefined}
                     >
                         {cell && (
-                            <span className={`text-[7px] font-medium leading-none ${
-                                cell.isDone ? 'text-white' : 'text-gray-500'
+                            <span className={`text-[11px] font-semibold leading-none ${
+                                cell.isDone ? 'text-white' : 'text-gray-700'
                             }`}>
                                 {cell.d}
                             </span>
