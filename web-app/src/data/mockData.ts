@@ -675,3 +675,52 @@ export const coursePlans = {
     ]
   }
 };
+
+// 生成計劃任務
+export const generatePlanTasks = (planId, startDateStr) => {
+  const plan = coursePlans[planId];
+  if (!plan) return [];
+
+  const tasks = [];
+  let currentDate = new Date(startDateStr + 'T00:00:00');
+  let taskCounter = 1;
+
+  // 為每個階段生成任務
+  plan.stages.forEach((stage, stageIndex) => {
+    stage.tasks.forEach((stageTask, taskIndex) => {
+      // 為該階段的每一天都重複相同的任務內容
+      for (let day = 0; day < stage.duration; day++) {
+        const taskDate = new Date(currentDate);
+        taskDate.setDate(taskDate.getDate() + day);
+        const dateStr = taskDate.toISOString().split('T')[0];
+
+        tasks.push({
+          id: `plan-${planId}-${stageIndex}-${taskIndex}-${day}`,
+          userId: 'demo-user',
+          title: stageTask.title,
+          details: stageTask.description,
+          cue: '📋',
+          identity: stageTask.title,
+          type: 'binary', // 計劃任務默認為 binary 類型
+          category: 'book', // 使用 book 圖標代表課程計劃
+          frequency: 'daily',
+          status: 'active',
+          recurrence: { type: 'daily', interval: 1, weekDays: [1, 2, 3, 4, 5, 6, 0] },
+          reminder: { enabled: true, time: '09:00' },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          history: {},
+          assignmentId: `assignment-${planId}`, // 關聯到計劃
+          planId: planId, // 追蹤來自哪個計劃
+          planName: plan.name,
+        });
+
+        taskCounter++;
+      }
+
+      currentDate.setDate(currentDate.getDate() + stage.duration);
+    });
+  });
+
+  return tasks;
+};

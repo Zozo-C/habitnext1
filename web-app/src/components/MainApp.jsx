@@ -22,7 +22,7 @@ import { USER_TYPE_PROFILES } from '@/lib/typeKeys';
 import { SLEEP_TYPE_PROFILES } from '@/lib/sleepTypeKeys';
 import { CATEGORY_CONFIG, domainToIconKey } from '@/lib/constants';
 import { visibleSubtasks, computeChecklistValue } from '@/lib/subtasks';
-import { mockTasks, explorePlanSections } from '@/data/mockData';
+import { mockTasks, explorePlanSections, generatePlanTasks } from '@/data/mockData';
 import PlanGroup from './PlanGroup';
 import TemplateExplorer from './TemplateExplorer';
 import CourseExplorer from './CourseExplorer';
@@ -832,6 +832,39 @@ const MainApp = () => {
         setEditingTask(null);
     };
 
+    // Handle joining a course plan: generate all plan tasks and add them to the task list
+    const handleJoinPlan = async (planId, startDate) => {
+        try {
+            const generatedTasks = generatePlanTasks(planId, startDate);
+            if (!generatedTasks || generatedTasks.length === 0) {
+                console.warn('No tasks generated for plan:', planId);
+                return;
+            }
+
+            // Add all generated tasks to the current task list
+            setTasks(prev => [...prev, ...generatedTasks]);
+
+            // Create an assignment for the plan to group these tasks
+            const assignment = {
+                id: `assignment-${planId}`,
+                name: `${generatedTasks[0]?.planName || '課程計劃'} (${startDate})`,
+                planId: planId,
+                startDate: startDate,
+                taskCount: generatedTasks.length,
+                tasks: generatedTasks.map(t => t.id)
+            };
+            setAssignments(prev => [...prev, assignment]);
+
+            // Close the CourseExplorer modal
+            setIsCoursesOpen(false);
+
+            console.log(`✅ Successfully joined plan: ${planId} with ${generatedTasks.length} tasks`);
+        } catch (err) {
+            console.error('Failed to join plan:', err);
+            alert('加入計劃失敗，請重試');
+        }
+    };
+
     // ────────────────────────────────────────────────────────────────
     // Slice K — aspiration flow callbacks (Picker → RecommendationPanel
     // → existing template/habit flows). Centralised here so the modal
@@ -1340,6 +1373,7 @@ const MainApp = () => {
             <CourseExplorer
                 isOpen={isCoursesOpen}
                 onClose={() => setIsCoursesOpen(false)}
+                onJoinPlan={handleJoinPlan}
             />
 
             <TaskFormModal
