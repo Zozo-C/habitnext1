@@ -74,13 +74,13 @@ const HabitCalendarCard = ({ task, year, month, todayStr, onClick }) => {
                         className={`aspect-square rounded-[2px] flex items-center justify-center ${
                             !cell ? '' :
                             cell.isFuture ? 'bg-gray-100' :
-                            cell.isDone ? '' : 'bg-gray-200'
+                            cell.isDone ? '' : 'bg-gray-400'
                         }`}
                         style={cell?.isDone ? { backgroundColor: doneColor } : undefined}
                     >
                         {cell && (
                             <span className={`text-[11px] font-semibold leading-none ${
-                                cell.isDone ? 'text-white' : 'text-gray-700'
+                                cell.isDone ? 'text-white' : cell.isFuture ? 'text-gray-500' : 'text-white'
                             }`}>
                                 {cell.d}
                             </span>
