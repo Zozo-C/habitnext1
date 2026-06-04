@@ -17,6 +17,11 @@ const IconRenderer = ({ category, size = 18, className = '' }) => {
     // domain name (mapped via DOMAIN_TO_ICON_KEY), and unknown/falsy → 'star'.
     const config = CATEGORY_CONFIG[resolveIconKey(category)];
 
+    // Safety check: ensure config exists and is an object
+    if (!config || typeof config !== 'object') {
+        return <span className={className} style={{ fontSize: `${size}px` }}>⭐</span>;
+    }
+
     // Backwards-compat: TaskFormModal can dynamically add entries with
     // type 'emoji' when the user enters a custom emoji as their icon.
     if (config.type === 'emoji') {
