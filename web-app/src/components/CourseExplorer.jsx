@@ -30,17 +30,6 @@ const CourseCard = ({ template, onButtonClick, index = 0 }) => {
 
       {/* Content - with relative positioning to appear above decorative image */}
       <div className="px-5 py-5 flex flex-col flex-1 gap-2 relative z-10">
-        {/* Tag - subtle style */}
-        <div
-          className="text-xs font-semibold mb-2 px-3 py-1 rounded-full inline-block w-fit text-white"
-          style={{
-            backgroundColor: template.accent,
-            opacity: 0.85,
-          }}
-        >
-          {template.tag}
-        </div>
-
         {/* Title */}
         <h4 className="font-bold text-sm text-gray-900 mb-1 line-clamp-2 leading-tight">
           {template.name}
