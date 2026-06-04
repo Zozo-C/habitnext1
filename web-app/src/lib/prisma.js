@@ -11,3 +11,5 @@ export const prisma = {
   aspiration: { findMany: async () => [], findUnique: async () => null },
   planCategory: { findMany: async () => [], findUnique: async () => null },
 };
+
+export default prisma;
