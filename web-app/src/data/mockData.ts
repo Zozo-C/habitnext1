@@ -593,3 +593,85 @@ export const mockTasks = [
     },
   },
 ];
+
+// 計劃詳情（包含階段和任務）
+export const coursePlans = {
+  sunflower: {
+    id: 'sunflower',
+    name: '向日葵型小課程',
+    duration: 28, // 天數
+    totalTasks: 28,
+    participants: 3,
+    stages: [
+      {
+        id: 'L1',
+        name: '入門 — 微習慣起步',
+        duration: 7,
+        tasks: [
+          { id: 's1-1', title: '每餐先吃蛋白質和蔬菜，再吃主食', description: '幫助穩定血糖' },
+          { id: 's1-2', title: '飯後不立刻坐下，先站著或慢慢走 10 分鐘', description: '促進葡萄糖吸收' },
+          { id: 's1-3', title: '第一餐吃完後保留點心或水果', description: '補充營養' },
+        ]
+      },
+      {
+        id: 'L2',
+        name: '進階 — 主動行動',
+        duration: 7,
+        tasks: [
+          { id: 's2-1', title: '把含糖飲料替換成白開水或無糖飲品', description: '減少血糖波動' },
+          { id: 's2-2', title: '每餐飯後走路 10 分鐘', description: '運動有助血糖穩定' },
+          { id: 's2-3', title: '把蜂蜜轉移到早前', description: '時間點很重要' },
+        ]
+      },
+      {
+        id: 'L3',
+        name: '整合 — 整生活節奏',
+        duration: 7,
+        tasks: [
+          { id: 's3-1', title: '其中一餐的主食開始換成主食類 (飯米、燕麥)', description: '高纖選擇' },
+          { id: 's3-2', title: '每天找一段 20 分鐘的運動走路時間', description: '建立習慣' },
+          { id: 's3-3', title: '把益生菌移到早上空腹時吃', description: '吸收更好' },
+        ]
+      },
+      {
+        id: 'L4',
+        name: '完整 — 全方位整合',
+        duration: 7,
+        tasks: [
+          { id: 's4-1', title: '今天不吃精緻甜食（蛋糕、雞尾酒、合成奶料）', description: '關鍵挑戰' },
+          { id: 's4-2', title: '每天累積 7000 步', description: '運動目標' },
+          { id: 's4-3', title: '起床空腹（感益生菌）、斷食（蕃茄+蛋類）、睡眠（鎂）', description: '完整組合' },
+        ]
+      }
+    ]
+  },
+  orchid: {
+    id: 'orchid',
+    name: '蘭花型小課程',
+    duration: 14,
+    totalTasks: 14,
+    participants: 2,
+    stages: [
+      {
+        id: 'L1',
+        name: '穩定基礎',
+        duration: 7,
+        tasks: [
+          { id: 'o1-1', title: '建立固定的起床和睡眠時間', description: '穩定節律' },
+          { id: 'o1-2', title: '早上曬 15 分鐘太陽', description: '調整生理時鐘' },
+          { id: 'o1-3', title: '練習 5 分鐘冥想或呼吸練習', description: '舒緩壓力' },
+        ]
+      },
+      {
+        id: 'L2',
+        name: '深化穩定',
+        duration: 7,
+        tasks: [
+          { id: 'o2-1', title: '每日進行溫和瑜伽或伸展 20 分鐘', description: '放鬆身體' },
+          { id: 'o2-2', title: '記錄每日情緒和壓力水位', description: '自我觀察' },
+          { id: 'o2-3', title: '避免咖啡因在下午 3 點後攝入', description: '改善睡眠' },
+        ]
+      }
+    ]
+  }
+};
