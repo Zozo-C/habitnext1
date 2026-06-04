@@ -34,6 +34,9 @@ import JourneyView from './journey/JourneyView';
 import AchievementCenter from './AchievementCenter';
 import RecommendationCardRow from './RecommendationCardRow';
 import StreakCelebration from './StreakCelebration';
+import DailyView from './views/DailyView';
+import ManageView from './views/ManageView';
+import DashboardDetailView from './views/DashboardDetailView';
 
 // StatsView is dynamically imported to keep recharts (~96kb gzip) off the
 // `/` route's First Load JS — it only loads when the user opens the stats tab.
@@ -1219,237 +1222,67 @@ const MainApp = () => {
                     <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 no-scrollbar">
 
                         {currentView === 'daily' && (
-                            <div className="animate-fade-in-up">
-                                {/* Desktop-only week strip — AppHeader (which
-                                    carries the mobile strip) is md:hidden, so
-                                    without this desktop users have no way to
-                                    switch dates. Hidden on mobile to avoid a
-                                    duplicate strip. */}
-                                <div className="hidden md:block mb-4 bg-transparent rounded-2xl border border-gray-100 shadow-sm overflow-visible">
-                                    <WeekStrip
-                                        selectedDate={selectedDate}
-                                        onSelectDate={setSelectedDate}
-                                        tasks={tasks}
-                                        className="px-3 py-1"
-                                    />
-                                </div>
-                                <div className="flex items-center justify-between gap-2 mb-3 px-1">
-                                    <span className="text-sm text-gray-600">
-                                        {isMenstrualMode
-                                            ? (menstrualExpired ? '生理期模式（超過 5 天）' : '生理期模式進行中')
-                                            : '生理期模式'}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleToggleMenstrual(!isMenstrualMode)}
-                                        className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors ${
-                                            isMenstrualMode
-                                                ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                        }`}
-                                    >
-                                        {isMenstrualMode ? '結束生理期' : '我正在生理期'}
-                                    </button>
-                                </div>
-                                {showRecommendationCards && (
-                                    <RecommendationCardRow
-                                        onOpenTemplateExplorer={() => setIsTemplateExplorerOpen(true)}
-                                        onDismiss={() => setShowRecommendationCards(false)}
-                                    />
-                                )}
-                                {/* Slice L — focus-map banner. Shown when the user has built up
-                                    >= 5 candidates and hasn't dismissed this session. Per-session
-                                    dismiss only (resets on full page reload). */}
-                                {isSelectedToday && candidateCount >= 5 && !bannerDismissed && (
-                                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 mb-4">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="flex-1">
-                                                <p className="text-xs font-bold text-amber-700">
-                                                    ✨ 你有 {candidateCount} 個候選習慣
-                                                </p>
-                                                <p className="text-sm font-black text-gray-800 mt-1">開始焦點地圖，挑出黃金行為</p>
-                                                <p className="text-[11px] text-gray-500 mt-1">Fogg 建議篩 3 個實際開始</p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setBannerDismissed(true)}
-                                                className="p-1 -mr-1 text-gray-400 hover:text-gray-600 text-lg leading-none"
-                                                aria-label="暫時隱藏"
-                                            >
-                                                ×
-                                            </button>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsFocusMapModalOpen(true)}
-                                            className="mt-3 w-full px-4 py-2 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-colors"
-                                        >
-                                            開始評分 →
-                                        </button>
-                                    </div>
-                                )}
-
-                                {isSelectedToday && (
-                                    <DashboardSummaryCard tasks={tasks} onOpenDetail={() => setCurrentView('dashboard_detail')} />
-                                )}
-
-                                {/* Date browsing pill — only when viewing a non-today date */}
-                                {!isSelectedToday && (
-                                    <div className="mb-4 flex items-center justify-between gap-2 bg-indigo-50 border border-indigo-100 rounded-2xl px-4 py-3">
-                                        <p className="text-xs text-indigo-700">
-                                            正在預覽 <span className="font-bold">{dailySectionLabel}</span>
-                                        </p>
-                                        <button
-                                            type="button"
-                                            onClick={() => setSelectedDate(todayStr)}
-                                            className="text-xs font-bold px-3 py-1 rounded-full bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-100 transition-colors"
-                                        >
-                                            回到今天
-                                        </button>
-                                    </div>
-                                )}
-
-                                <div className="space-y-6">
-                                    {/* Section 1: Scheduled tasks for selected date */}
-                                    <div>
-                                        <h3 className="text-gray-800 font-bold text-lg mb-4 flex items-center gap-2">
-                                            <span className="w-1 h-5 bg-emerald-500 rounded-full"></span> {dailySectionLabel}
-                                        </h3>
-                                        <div className="space-y-3">
-                                            {/* Incomplete tasks — prominent, always visible.
-                                                Each card is wrapped in an exit-animation div so
-                                                that when a binary task is completed, the wrapper
-                                                collapses max-height + fades opacity → the cards
-                                                below naturally slide up (CSS layout reflow). */}
-                                            {incompleteDailyTasks.map(task => {
-                                                const isExiting = exitingTaskIds.has(task.id);
-                                                return (
-                                                    <div
-                                                        key={task.id}
-                                                        className={`overflow-hidden transition-all duration-300 ease-out ${
-                                                            isExiting
-                                                                ? 'max-h-0 opacity-0 pointer-events-none'
-                                                                : 'max-h-[640px] opacity-100'
-                                                        }`}
-                                                    >
-                                                        <TaskCard task={task} viewingDate={selectedDate} onClick={() => { setViewingTask(task); setIsDetailModalOpen(true); }} onUpdate={handleTaskUpdate} onAfterAction={() => { if (user?.id) fetchTasks(user.id); }} onPickLocation={handlePickLocation} onAttachPhoto={handleAttachPhoto} attachingKey={attachingKey} />
-                                                    </div>
-                                                );
-                                            })}
-
-                                            {/* Divider + collapsible 已完成 section. Only renders when
-                                                there's at least one completed task; tap toggles expand.
-                                                Default state is collapsed (set via completedExpanded
-                                                useState above) so the daily list visually focuses on
-                                                what still needs doing. */}
-                                            {completedDailyTasks.length > 0 && (
-                                                <>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setCompletedExpanded(v => !v)}
-                                                        aria-expanded={completedExpanded}
-                                                        className="w-full flex items-center gap-3 py-2 px-2 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors"
-                                                    >
-                                                        <span className="flex-1 h-px bg-gray-200" />
-                                                        <span className="flex items-center gap-1 whitespace-nowrap">
-                                                            已完成 {completedDailyTasks.length} 個
-                                                            {completedExpanded
-                                                                ? <ChevronUp size={14} />
-                                                                : <ChevronDown size={14} />}
-                                                        </span>
-                                                        <span className="flex-1 h-px bg-gray-200" />
-                                                    </button>
-                                                    {completedExpanded && completedDailyTasks.map(task => (
-                                                        // Re-completing from the already-done section
-                                                        // un-toggles back to incomplete; no exit animation
-                                                        // needed (Task naturally jumps back into the list
-                                                        // above on re-fetch). Use handleUpdateProgress
-                                                        // directly to skip the toast / scheduled exit.
-                                                        <TaskCard key={task.id} task={task} viewingDate={selectedDate} onClick={() => { setViewingTask(task); setIsDetailModalOpen(true); }} onUpdate={handleUpdateProgress} onAfterAction={() => { if (user?.id) fetchTasks(user.id); }} onPickLocation={handlePickLocation} onAttachPhoto={handleAttachPhoto} attachingKey={attachingKey} />
-                                                    ))}
-                                                </>
-                                            )}
-
-                                            {dailyTasks.length === 0 && (
-                                                <p className="text-gray-400 text-sm col-span-full">
-                                                    {isSelectedToday ? '今日無固定行程。' : '這天沒有安排任務。'}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Section 2: Period Goals (Flexible) — only on today */}
-                                    {isSelectedToday && flexibleTasks.length > 0 && (
-                                        <div>
-                                            <h3 className="text-gray-800 font-bold text-lg mb-4 flex items-center gap-2">
-                                                <span className="w-1 h-5 bg-amber-500 rounded-full"></span> 週期目標 (彈性)
-                                            </h3>
-                                            <div className="space-y-3">
-                                                {flexibleTasks.map(task => (
-                                                    <TaskCard key={task.id} task={task} viewingDate={selectedDate} onClick={() => { setViewingTask(task); setIsDetailModalOpen(true); }} onUpdate={handleUpdateProgress} onAfterAction={() => { if (user?.id) fetchTasks(user.id); }} onPickLocation={handlePickLocation} onAttachPhoto={handleAttachPhoto} attachingKey={attachingKey} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <DailyView
+                                tasks={tasks}
+                                selectedDate={selectedDate}
+                                onSelectDate={setSelectedDate}
+                                user={user}
+                                isMenstrualMode={isMenstrualMode}
+                                menstrualStart={menstrualStart}
+                                completedExpanded={completedExpanded}
+                                showRecommendationCards={showRecommendationCards}
+                                candidateCount={candidateCount}
+                                bannerDismissed={bannerDismissed}
+                                onToggleMenstrual={handleToggleMenstrual}
+                                onUpdateProgress={handleUpdateProgress}
+                                onOpenDetail={() => setCurrentView('dashboard_detail')}
+                                onOpenTemplateExplorer={() => setIsTemplateExplorerOpen(true)}
+                                onDismissRecommendations={() => setShowRecommendationCards(false)}
+                                onSetBannerDismissed={setBannerDismissed}
+                                onSetCompletedExpanded={setCompletedExpanded}
+                                onOpenFocusMap={() => setIsFocusMapModalOpen(true)}
+                                onPickLocation={handlePickLocation}
+                                onAttachPhoto={handleAttachPhoto}
+                                attachingKey={attachingKey}
+                                incompleteDailyTasks={incompleteDailyTasks}
+                                completedDailyTasks={completedDailyTasks}
+                                flexibleTasks={flexibleTasks}
+                                dailyTasks={dailyTasks}
+                                isSelectedToday={isSelectedToday}
+                                dailySectionLabel={dailySectionLabel}
+                                todayStr={todayStr}
+                                menstrualExpired={menstrualExpired}
+                                exitingTaskIds={exitingTaskIds}
+                                fetchTasks={fetchTasks}
+                                onTaskDetailClick={(task) => { setViewingTask(task); setIsDetailModalOpen(true); }}
+                            />
                         )}
 
                         {currentView === 'dashboard_detail' && (
-                            <HabitCalendar
+                            <DashboardDetailView
                                 tasks={tasks}
-                                onUpdate={handleUpdateProgress}
                                 onTaskClick={(task) => { setViewingTask(task); setIsDetailModalOpen(true); }}
+                                onUpdateProgress={handleUpdateProgress}
                             />
                         )}
 
                         {currentView === 'manage' && (
-                            <div className="p-4">
-                                <h2 className="text-2xl font-black text-gray-800 mb-6">計畫總覽</h2>
-                                {/* Tasks List */}
-                                <div className="space-y-4 pb-24 md:pb-0">
-                                    {loading && <div className="text-center py-10 text-gray-400">載入中...</div>}
-
-                                    {!loading && tasks.length === 0 && (
-                                        <div className="text-center py-20">
-                                            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">🌵</div>
-                                            <h3 className="text-xl font-bold text-gray-800 mb-2">還沒有習慣</h3>
-                                            <p className="text-gray-500 mb-6">開始建立你的第一個習慣，或是探索專家計畫</p>
-                                            <div className="flex justify-center gap-4">
-                                                <button onClick={() => setIsTemplateExplorerOpen(true)} className="text-emerald-500 font-bold hover:underline">探索計畫</button>
-                                                <button onClick={() => setIsFormModalOpen(true)} className="text-indigo-500 font-bold hover:underline">建立習慣</button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Plan Groups */}
-                                    {groupedTasks.map(group => (
-                                        <PlanGroup
-                                            key={group.id}
-                                            assignment={group}
-                                            tasks={group.tasks}
-                                            onDelete={handleDeleteAssignment}
-                                            onTaskClick={handleTaskClick}
-                                            onTaskEdit={handleTaskClick}
-                                            onTaskDelete={handleDeleteTask}
-                                            onUpdate={handleUpdateProgress}
-                                        />
-                                    ))}
-
-                                    {/* Solo Tasks */}
-                                    {soloTasks.map(task => (
-                                        <TaskCard
-                                            key={task.id}
-                                            task={task}
-                                            onClick={() => handleTaskClick(task)}
-                                            onUpdate={handleUpdateProgress}
-                                            onPickLocation={handlePickLocation}
-                                            onAttachPhoto={handleAttachPhoto}
-                                            attachingKey={attachingKey}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                            <ManageView
+                                tasks={tasks}
+                                assignments={assignments}
+                                loading={loading}
+                                onTaskClick={handleTaskClick}
+                                onDeleteTask={handleDeleteTask}
+                                onDeleteAssignment={handleDeleteAssignment}
+                                onUpdateProgress={handleUpdateProgress}
+                                onOpenTemplateExplorer={() => setIsTemplateExplorerOpen(true)}
+                                onOpenLibrary={() => { setEditingTask(null); setIsLibraryModalOpen(true); }}
+                                onPickLocation={handlePickLocation}
+                                onAttachPhoto={handleAttachPhoto}
+                                attachingKey={attachingKey}
+                                groupedTasks={groupedTasks}
+                                soloTasks={soloTasks}
+                            />
                         )}
 
                         {currentView === 'stats' && (
