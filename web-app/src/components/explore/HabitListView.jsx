@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
-import IconRenderer from '../IconRenderer';
-import HabitInsightSection from '../insights/HabitInsightSection';
-import { CATEGORY_CONFIG, resolveIconKey } from '@/lib/constants';
+import { Check } from 'lucide-react';
+import HabitCard from './HabitCard';
 
 // NOTE (2026-05-25, Slice K Task 11): the 「清單 ｜ 焦點地圖」view-mode
 // toggle was removed here. Spec v2 reframed the add-flow around the
@@ -12,12 +10,6 @@ import { CATEGORY_CONFIG, resolveIconKey } from '@/lib/constants';
 // user's main path. The FocusMap component itself is kept (admin / debug
 // tool); OfficialHabit.impact / ability data + tests stay valid. Only the
 // HabitListView toggle was wrong-placed for v2's UX.
-
-const DIFFICULTY_OPTIONS = [
-  { key: 'beginner',     label: '入門', color: 'emerald' },
-  { key: 'intermediate', label: '進階', color: 'amber' },
-  { key: 'challenge',    label: '挑戰', color: 'red' },
-];
 
 function getDefaultDifficulty(habit) {
   const diffs = habit.difficulties || {};
@@ -27,52 +19,15 @@ function getDefaultDifficulty(habit) {
   return 'beginner';
 }
 
-function getEnabledDifficulties(habit) {
-  const diffs = habit.difficulties || {};
-  return DIFFICULTY_OPTIONS.filter(d => diffs[d.key]?.enabled);
-}
-
-function summarizeCadence(r) {
-  if (!r) return '';
-  if (r.type === 'daily') {
-    return r.periodTarget > 1 ? `每日 ${r.periodTarget} 次` : '每日';
-  }
-  if (r.type === 'weekly') {
-    const days = r.weekDays || [];
-    if (days.length === 3 && [1, 3, 5].every(d => days.includes(d))) return '週 3 (一三五)';
-    if (days.length === 5 && [1, 2, 3, 4, 5].every(d => days.includes(d))) return '週 5 (週間)';
-    if (days.length === 7) return '每日';
-    const n = r.periodTarget || days.length || 1;
-    return `每週 ${n} 次`;
-  }
-  if (r.type === 'monthly') {
-    const i = r.interval || 1;
-    if (i === 12) return '每年';
-    if (i === 6) return '每半年';
-    if (i === 3) return '每季';
-    if (i === 1) return '每月';
-    return `每 ${i} 個月`;
-  }
-  return '';
-}
-
-function summarizeDifficulty(config) {
-  if (!config) return '';
-  const cadence = summarizeCadence(config.recurrence);
-  if (config.type === 'quantitative') {
-    return `${config.dailyTarget}${config.unit || ''} · ${cadence}`;
-  }
-  return cadence;
-}
-
 export default function HabitListView({
   habits,
   selectedDifficulty,
   setSelectedDifficulty,
   onSelectHabit,
   emptyText,
+  multiSelectMode = false,
 }) {
-  const [expandedId, setExpandedId] = useState(null);
+  const [checkedHabits, setCheckedHabits] = useState(new Set());
 
   if (habits.length === 0) {
     return (
@@ -82,104 +37,103 @@ export default function HabitListView({
     );
   }
 
-  const toggleExpand = (habitId) => {
-    setExpandedId(prev => prev === habitId ? null : habitId);
+  const handleSelectDifficulty = (habitId, difficulty) => {
+    setSelectedDifficulty(prev => ({ ...prev, [habitId]: difficulty }));
   };
 
-  return (
-    <div className="space-y-3">
-      {habits.map(habit => {
-        const enabledDiffs = getEnabledDifficulties(habit);
-        const currentDiff = selectedDifficulty[habit.id] || getDefaultDifficulty(habit);
-        // Read admin-set per-habit icon first; fall back to the domain default
-        // only when the habit has no explicit icon. This mirrors the admin
-        // grid (habits/page.js:280) and HabitLibraryModal.
-        const iconKey = resolveIconKey(habit.icon || habit.category);
-        const config = CATEGORY_CONFIG[iconKey];
-        const isExpanded = expandedId === habit.id;
+  const handleToggleCheck = (habitId) => {
+    const newChecked = new Set(checkedHabits);
+    if (newChecked.has(habitId)) {
+      newChecked.delete(habitId);
+    } else {
+      newChecked.add(habitId);
+    }
+    setCheckedHabits(newChecked);
+  };
 
-        return (
-          <div
-            key={habit.id}
-            className={`bg-white border rounded-xl shadow-sm transition-all ${
-              isExpanded ? 'border-emerald-200 shadow-md' : 'border-gray-100 hover:shadow-md'
-            }`}
-          >
-            {/* Header — click to expand/collapse */}
-            <button
-              type="button"
-              onClick={() => toggleExpand(habit.id)}
-              className="w-full text-left p-4 flex items-start justify-between gap-3"
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className={`${config.bg} p-2 rounded-xl flex-shrink-0`}>
-                  <IconRenderer category={iconKey} size={18} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-gray-800">{habit.name}</h4>
-                  {habit.description && !isExpanded && (
-                    <p className="text-xs text-gray-400 line-clamp-1 mt-0.5">{habit.description}</p>
+  const handleAddBatch = () => {
+    const habitsToAdd = Array.from(checkedHabits).map(habitId => {
+      const habit = habits.find(h => h.id === habitId);
+      const difficulty = selectedDifficulty[habitId] || getDefaultDifficulty(habit);
+      return { habit, difficulty };
+    });
+
+    // Call onSelectHabit for each checked habit
+    habitsToAdd.forEach(({ habit, difficulty }) => {
+      onSelectHabit(habit, difficulty);
+    });
+
+    // Clear selection
+    setCheckedHabits(new Set());
+  };
+
+
+  return (
+    <div className="space-y-3 pb-4">
+      {multiSelectMode && (
+        <div className="px-2 py-2 text-xs text-gray-500">
+          已選擇 {checkedHabits.size}/{habits.length}
+        </div>
+      )}
+
+      {habits.map(habit => (
+        <div key={habit.id} className="flex gap-2 items-start">
+          {multiSelectMode && (
+            <div className="pt-4 flex-shrink-0">
+              <label className="relative flex items-center cursor-pointer w-6 h-6 mt-0.5">
+                <input
+                  type="checkbox"
+                  checked={checkedHabits.has(habit.id)}
+                  onChange={() => handleToggleCheck(habit.id)}
+                  className="absolute opacity-0 w-6 h-6 cursor-pointer"
+                />
+                <div
+                  className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
+                    checkedHabits.has(habit.id)
+                      ? 'border-[#169E6B] bg-[#169E6B]'
+                      : 'border-gray-300 bg-white'
+                  }`}
+                >
+                  {checkedHabits.has(habit.id) && (
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
                   )}
                 </div>
-              </div>
-              <div className="flex-shrink-0 text-gray-400">
-                {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </div>
-            </button>
-
-            {/* Expanded body — full description, scientific brief, 3-tier
-                comparison, add button. Insight section silently no-ops when
-                the habit has no published insights, so it doesn't take vertical
-                space for habits that haven't been authored yet. */}
-            {isExpanded && (
-              <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
-                {habit.description && (
-                  <p className="text-sm text-gray-600 leading-relaxed">{habit.description}</p>
-                )}
-
-                <HabitInsightSection habitId={habit.id} />
-
-                <div>
-                  <p className="text-xs text-gray-500 mb-2">選擇難度：</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {enabledDiffs.map(diff => {
-                      const isSelected = currentDiff === diff.key;
-                      const diffConfig = habit.difficulties[diff.key];
-                      const summary = summarizeDifficulty(diffConfig);
-                      return (
-                        <button
-                          key={diff.key}
-                          onClick={() => setSelectedDifficulty(prev => ({ ...prev, [habit.id]: diff.key }))}
-                          className="flex flex-col items-center gap-0.5 px-2 py-2.5 rounded-lg transition-colors"
-                          style={isSelected ? {
-                            backgroundColor: diff.color === 'emerald' ? '#10b981' : diff.color === 'amber' ? '#f59e0b' : '#ef4444',
-                            color: 'white'
-                          } : {
-                            backgroundColor: diff.color === 'emerald' ? '#ECFDF5' : diff.color === 'amber' ? '#FEF3C7' : '#FEE2E2',
-                            color: diff.color === 'emerald' ? '#047857' : diff.color === 'amber' ? '#B45309' : '#B91C1C',
-                          }}
-                        >
-                          <span className="text-xs font-bold">{diffConfig?.label || diff.label}</span>
-                          {summary && (
-                            <span className="text-[10px] leading-tight opacity-90 text-center">{summary}</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => onSelectHabit(habit, currentDiff)}
-                  className="w-full flex items-center justify-center gap-1 text-sm text-white bg-emerald-500 px-3 py-2.5 rounded-xl font-bold hover:bg-emerald-600 transition-colors"
-                >
-                  <Plus size={16} /> 加入此習慣
-                </button>
-              </div>
-            )}
+              </label>
+            </div>
+          )}
+          <div className="flex-1">
+            <HabitCard
+              habit={habit}
+              selectedDifficulty={selectedDifficulty[habit.id] || getDefaultDifficulty(habit)}
+              onSelectDifficulty={handleSelectDifficulty}
+              onSelectHabit={multiSelectMode ? undefined : onSelectHabit}
+              showAddButton={!multiSelectMode}
+            />
           </div>
-        );
-      })}
+        </div>
+      ))}
+
+      {multiSelectMode && checkedHabits.size > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">
+              已選擇 {checkedHabits.size} 個習慣
+            </span>
+            <button
+              type="button"
+              onClick={handleAddBatch}
+              className="flex items-center gap-2 px-4 py-2 text-white font-bold rounded-lg transition-colors"
+              style={{
+                backgroundColor: '#169E6B',
+              }}
+            >
+              <Check size={16} /> 批量加入
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -592,6 +592,36 @@ export const mockTasks = [
       '2026-06-03': { value: 0 },
     },
   },
+
+  // Task 16: 每餐先吃蛋白質和蔬菜（from Sunflower Plan）
+  {
+    id: 'task-16',
+    userId: 'demo-user',
+    title: '每餐先吃蛋白質和蔬菜，再吃主食',
+    details: '幫助穩定血糖',
+    cue: '🥗',
+    identity: '健康飲食的人',
+    type: 'binary',
+    category: 'apple',
+    frequency: 'daily',
+    status: 'active',
+    recurrence: { type: 'daily', interval: 1, weekDays: [1, 2, 3, 4, 5, 6, 0] },
+    reminder: { enabled: true, time: '08:00' },
+    createdAt: '2026-05-20T00:00:00Z',
+    updatedAt: '2026-06-02T00:00:00Z',
+    assignmentId: 'assignment-sunflower',
+    planId: 'sunflower',
+    planName: '向日葵型小課程',
+    history: {
+      '2026-05-28': true,
+      '2026-05-29': true,
+      '2026-05-30': false,
+      '2026-05-31': true,
+      '2026-06-01': true,
+      '2026-06-02': true,
+      '2026-06-03': false,
+    },
+  },
 ];
 
 // 計劃詳情（包含階段和任務）

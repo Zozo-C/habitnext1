@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Target, X, Edit2, Loader, Search, ChevronLeft, Sparkles, ChevronRight } from 'lucide-react';
+import { Target, X, Edit2, Loader, Search, ChevronLeft, Sparkles, ChevronRight, Copy } from 'lucide-react';
 import DomainGrid from './explore/DomainGrid';
 import HabitListView from './explore/HabitListView';
 import CategoryIcon from './explore/CategoryIcon';
@@ -46,6 +46,7 @@ const TaskLibraryModal = ({
     const [toast, setToast] = useState(null);          // { text } | null
     const [toastTimer, setToastTimer] = useState(null);
     const [savedThisSession, setSavedThisSession] = useState(0);
+    const [multiSelectMode, setMultiSelectMode] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -370,15 +371,30 @@ const TaskLibraryModal = ({
                         </>
                     ) : (
                         <>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                {view === 'search' ? `搜尋「${search}」` : '推薦習慣'}
-                            </p>
+                            <div className="flex items-center justify-between mb-3">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                    {view === 'search' ? `搜尋「${search}」` : '推薦習慣'}
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setMultiSelectMode(!multiSelectMode)}
+                                    className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-md transition-colors ${
+                                        multiSelectMode
+                                            ? 'bg-emerald-100 text-emerald-700'
+                                            : 'text-gray-600 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    <Copy size={14} />
+                                    {multiSelectMode ? '結束多選' : '多選'}
+                                </button>
+                            </div>
                             <HabitListView
                                 habits={visibleHabits}
                                 selectedDifficulty={selectedDifficulty}
                                 setSelectedDifficulty={setSelectedDifficulty}
                                 onSelectHabit={handleSelectHabit}
                                 emptyText={view === 'search' ? '沒有符合的習慣' : '這個面向目前還沒有推薦習慣'}
+                                multiSelectMode={multiSelectMode}
                             />
                         </>
                     )}

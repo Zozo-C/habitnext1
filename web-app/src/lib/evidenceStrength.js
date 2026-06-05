@@ -87,7 +87,24 @@ export function sanitizeEvidence(input) {
 }
 
 // 主函式：合法 evidence → { total, tier, tierLabel }；否則 null（不顯示 badge）。
+// 支援兩種格式：
+// 1. 詳細格式：{ studyType, scale, causality, replication }
+// 2. 簡化格式：{ rating: 'low'|'medium'|'high', label: string }
 export function scoreEvidence(evidence) {
+  // 檢查簡化格式（rating 字符串）
+  if (evidence && typeof evidence === 'object') {
+    if (evidence.rating === 'low' || evidence.rating === 'preliminary') {
+      return { total: 2, tier: 'preliminary', tierLabel: evidence.label || '低' };
+    }
+    if (evidence.rating === 'medium' || evidence.rating === 'moderate') {
+      return { total: 5, tier: 'moderate', tierLabel: evidence.label || '中' };
+    }
+    if (evidence.rating === 'high' || evidence.rating === 'strong') {
+      return { total: 8, tier: 'strong', tierLabel: evidence.label || '強' };
+    }
+  }
+
+  // 詳細格式
   const clean = sanitizeEvidence(evidence);
   if (!clean) return null;
   const total = DIMENSIONS.reduce((sum, dim) => {

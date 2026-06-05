@@ -142,36 +142,55 @@ const MainApp = () => {
 
     // 1. Check Auth on Load
     useEffect(() => {
-        // Ensure this only runs on client side after hydration
-        if (typeof window === 'undefined') return;
+        const initializeApp = async () => {
+            try {
+                // Check stored user from localStorage
+                const storedUser = localStorage.getItem('habit_user');
+                if (storedUser) {
+                    try {
+                        const parsedUser = JSON.parse(storedUser);
+                        setUser(parsedUser);
+                        setLoading(false);
+                        // Fetch tasks after setting user
+                        setTimeout(() => {
+                            fetchTasks(parsedUser.id);
+                            fetchAssignments(parsedUser.id);
+                            fetchCandidateCount(parsedUser.id);
+                        }, 0);
+                    } catch (parseErr) {
+                        console.error('Failed to parse stored user:', parseErr);
+                        localStorage.removeItem('habit_user');
+                        throw parseErr;
+                    }
+                } else {
+                    // Auto-enable demo mode on production (Vercel) if no stored user
+                    const isProduction = process.env.NODE_ENV === 'production';
+                    if (isProduction) {
+                        const demoUser = {
+                            id: 'demo-user',
+                            nickname: '設計測試者',
+                            phone: '0000000000',
+                            typeKey: 'daisy',
+                            sleepTypeKey: 'stress',
+                        };
+                        setUser(demoUser);
+                        setTasks(mockTasks || []);
+                        setLoading(false);
+                    } else {
+                        // Only show login on localhost/dev
+                        setIsLoginModalOpen(true);
+                        setLoading(false);
+                    }
+                }
+            } catch (err) {
+                console.error('[MainApp] Auth check failed:', err);
+                // Fallback: show login modal
+                setIsLoginModalOpen(true);
+                setLoading(false);
+            }
+        };
 
-        const storedUser = localStorage.getItem('habit_user');
-        // Check if demo mode is enabled via URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const isDemoMode = urlParams.get('demo') === 'true';
-
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
-            fetchTasks(parsedUser.id);
-            fetchAssignments(parsedUser.id);
-            fetchCandidateCount(parsedUser.id);  // Slice L
-        } else if (isDemoMode) {
-            // Demo mode: use mock user and mock tasks
-            const demoUser = {
-                id: 'demo-user',
-                nickname: '設計測試者',
-                phone: '0000000000',
-                typeKey: 'daisy',
-                sleepTypeKey: 'stress',
-            };
-            setUser(demoUser);
-            setTasks(mockTasks);
-            setLoading(false);
-        } else {
-            setIsLoginModalOpen(true);
-            setLoading(false);
-        }
+        initializeApp();
     }, []);
 
     // Slice L — refresh candidate count after add/rate. Cheap fetch (1 row).

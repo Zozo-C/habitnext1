@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Loader, Lightbulb, FileText, Tag } from 'lucide-react';
 import EvidenceBadge from './EvidenceBadge';
 import EvidenceScorePanel from './EvidenceScorePanel';
+import InsightDetailModal from './InsightDetailModal';
 
 // HabitInsightSection — Slice N user-facing surface for "為什麼這個習慣重要".
 //
@@ -41,11 +42,8 @@ function sourceTypeLabel(type) {
 // — once the user has chosen to "expand" they want to see where this
 // claim comes from. Putting sources behind layer 3 would feel buried.
 function InsightCard({ insight }) {
-    const [expanded, setExpanded] = useState(false);
-    const [detailOpen, setDetailOpen] = useState(false);
+    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [scoreOpen, setScoreOpen] = useState(false);
-    const sources = Array.isArray(insight.sources) ? insight.sources : [];
-    const tags = Array.isArray(insight.tags) ? insight.tags : [];
 
     // Headline is whatever's punchiest: takeaway if author wrote one,
     // otherwise fall back to title. We mark takeaway with quote marks
@@ -54,10 +52,13 @@ function InsightCard({ insight }) {
     const headline = hasTakeaway ? insight.takeaway : insight.title;
 
     return (
-        <article className={`border rounded-xl bg-white transition-all ${expanded ? 'border-emerald-200 shadow-sm' : 'border-gray-200 hover:border-emerald-200'}`}>
-            {/* Layer 1: badge（獨立）+ headline row */}
-            <div className="p-3">
-                <div className="flex items-start justify-between gap-2">
+        <article
+            onClick={() => setDetailModalOpen(true)}
+            className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md hover:border-emerald-200 transition-all cursor-pointer group"
+        >
+            {/* Card content - clickable to open modal */}
+            <div className="p-4">
+                <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                         {insight.evidence && (
                             <div className="mb-1.5">
@@ -68,32 +69,18 @@ function InsightCard({ insight }) {
                                 />
                             </div>
                         )}
-                        <button
-                            type="button"
-                            onClick={() => setExpanded(v => !v)}
-                            aria-expanded={expanded}
-                            className="w-full text-left"
+                        <p
+                            className={`text-sm leading-snug ${
+                                hasTakeaway ? 'text-emerald-900 font-medium' : 'text-gray-800 font-bold'
+                            } group-hover:text-emerald-700 transition-colors`}
                         >
-                            <p
-                                className={`text-sm leading-snug ${
-                                    hasTakeaway ? 'text-emerald-900 font-medium' : 'text-gray-800 font-bold'
-                                }`}
-                            >
-                                {hasTakeaway ? `「${headline}」` : headline}
-                            </p>
-                        </button>
+                            {hasTakeaway ? `「${headline}」` : headline}
+                        </p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setExpanded(v => !v)}
-                        aria-label={expanded ? '收合' : '展開'}
-                        className="text-gray-400 flex-shrink-0 mt-0.5"
-                    >
-                        {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </button>
+                    <ChevronDown size={16} className="text-gray-400 flex-shrink-0 mt-0.5 group-hover:text-emerald-600 transition-colors" />
                 </div>
 
-                {/* 證據力評分面板 — 由 badge 切換，獨立於卡片展開狀態 */}
+                {/* 證據力評分面板 — 由 badge 切換 */}
                 {scoreOpen && insight.evidence && (
                     <div className="mt-2">
                         <EvidenceScorePanel evidence={insight.evidence} />
@@ -101,78 +88,12 @@ function InsightCard({ insight }) {
                 )}
             </div>
 
-            {/* Layer 2: title + summary + sources + tags */}
-            {expanded && (
-                <div className="px-3 pb-3 space-y-3 border-t border-gray-100 pt-3">
-                    {/* Title only shown when takeaway was the headline — avoids
-                        duplicate when fallback already used the title. */}
-                    {hasTakeaway && (
-                        <h5 className="font-bold text-sm text-gray-800 leading-snug">
-                            {insight.title}
-                        </h5>
-                    )}
-
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                        {insight.summary}
-                    </p>
-
-                    {/* Layer 3 toggle — markdown detail */}
-                    <button
-                        type="button"
-                        onClick={() => setDetailOpen(v => !v)}
-                        aria-expanded={detailOpen}
-                        className="text-xs font-medium text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
-                    >
-                        {detailOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                        {detailOpen ? '收起研究細節' : '看研究細節'}
-                    </button>
-                    {detailOpen && (
-                        <div className="prose prose-sm max-w-none text-gray-700 prose-headings:text-gray-800 prose-strong:text-gray-900 prose-strong:font-bold prose-li:my-0.5 prose-p:my-2 prose-ul:my-2 leading-relaxed text-xs">
-                            <ReactMarkdown>{insight.detail || ''}</ReactMarkdown>
-                        </div>
-                    )}
-
-                    {/* Sources — visible at layer 2 so the trust signal
-                        appears with the rest of the body context. */}
-                    {sources.length > 0 && (
-                        <div className="space-y-1 pt-2 border-t border-gray-100">
-                            {sources.map((s, i) => (
-                                <div key={i} className="text-[11px] text-gray-500 leading-snug flex items-start gap-1.5">
-                                    <span className="text-gray-400 flex-shrink-0">📑</span>
-                                    <span className="min-w-0 flex-1">
-                                        {s.url ? (
-                                            <a
-                                                href={s.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-emerald-700 hover:underline inline-flex items-center gap-0.5 break-all"
-                                            >
-                                                {s.label || sourceTypeLabel(s.type)}
-                                                <ExternalLink size={10} className="flex-shrink-0" />
-                                            </a>
-                                        ) : (
-                                            <span>{s.label || sourceTypeLabel(s.type)}</span>
-                                        )}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Tags — bottom, smaller, layer 2. */}
-                    {tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
-                            {tags.map(t => (
-                                <span
-                                    key={t}
-                                    className="px-2 py-0.5 rounded-full text-[10px] bg-gray-100 text-gray-600"
-                                >
-                                    #{t}
-                                </span>
-                            ))}
-                        </div>
-                    )}
-                </div>
+            {/* Detail Modal */}
+            {detailModalOpen && (
+                <InsightDetailModal
+                    insight={insight}
+                    onClose={() => setDetailModalOpen(false)}
+                />
             )}
         </article>
     );
