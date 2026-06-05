@@ -144,9 +144,13 @@ const MainApp = () => {
     useEffect(() => {
         const initializeApp = async () => {
             try {
+                // Check for ?demo=true query parameter
+                const demoMode = typeof window !== 'undefined' &&
+                    new URLSearchParams(window.location.search).get('demo') === 'true';
+
                 // Check stored user from localStorage
                 const storedUser = localStorage.getItem('habit_user');
-                if (storedUser) {
+                if (storedUser && !demoMode) {
                     try {
                         const parsedUser = JSON.parse(storedUser);
                         setUser(parsedUser);
@@ -163,9 +167,9 @@ const MainApp = () => {
                         throw parseErr;
                     }
                 } else {
-                    // Auto-enable demo mode on production (Vercel) if no stored user
+                    // Auto-enable demo mode if ?demo=true or on production (Vercel)
                     const isProduction = process.env.NODE_ENV === 'production';
-                    if (isProduction) {
+                    if (isProduction || demoMode) {
                         const demoUser = {
                             id: 'demo-user',
                             nickname: '設計測試者',
@@ -177,7 +181,7 @@ const MainApp = () => {
                         setTasks(mockTasks || []);
                         setLoading(false);
                     } else {
-                        // Only show login on localhost/dev
+                        // Only show login on localhost/dev without ?demo=true
                         setIsLoginModalOpen(true);
                         setLoading(false);
                     }
@@ -1171,9 +1175,14 @@ const MainApp = () => {
 
     const soloTasks = tasks.filter(t => !t.assignmentId);
 
-    // Show empty state initially to avoid hydration mismatch
-    if (!user && loading) {
-        return null;
+    // If no user, show loading/login state on both SSR and client
+    // This ensures hydration doesn't fail due to mismatched content
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <p className="text-gray-600">初始化中...</p>
+            </div>
+        );
     }
 
     return (
