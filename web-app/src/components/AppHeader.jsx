@@ -48,7 +48,7 @@ const AppHeader = ({
                     </div>
                 ) : (
                     <span className="font-bold text-emerald-600">
-                        {currentView === 'manage' ? '任務管理'
+                        {currentView === 'manage' ? '計畫'
                             : currentView === 'dashboard_detail' ? '洞察報告'
                             : currentView === 'stats' ? '統計'
                             : currentView === 'journey' ? '旅程'
