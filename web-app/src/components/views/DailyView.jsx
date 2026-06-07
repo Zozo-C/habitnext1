@@ -185,7 +185,7 @@ const DailyView = ({
               {isMenstrualMode ? '結束生理期' : '我正在生理期'}
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {/* Incomplete tasks */}
             {incompleteDailyTasks.map(task => {
               const isExiting = exitingTaskIds.has(task.id);
@@ -261,7 +261,7 @@ const DailyView = ({
             <h3 className="text-gray-800 font-bold text-lg mb-4 flex items-center gap-2">
               <span className="w-1 h-5 bg-amber-500 rounded-full"></span> 週期目標 (彈性)
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {flexibleTasks.map(task => (
                 <TaskCard
                   key={task.id}

@@ -20,7 +20,7 @@ const DailyTasksSection = ({
 
                 {/* 未完成任務 */}
                 {incompleteDailyTasks.length > 0 && (
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-2 mb-4">
                         {incompleteDailyTasks.map(task => {
                             const isExiting = exitingTaskIds.has(task.id);
                             return (
