@@ -6,6 +6,7 @@ import {
     groupTemplatesBySection,
 } from '@/lib/templateRecommendation';
 import TemplateDetailPanel from './TemplateDetailPanel';
+import CourseCard from './CourseCard';
 
 // Fallback colors when a template.category slug isn't in PlanCategory yet
 // (legacy data, or admin deleted a non-system row). Family-tinted so it
@@ -191,6 +192,35 @@ const TemplateExplorer = ({ isOpen, onClose, userId, onJoin, userTypeKey = null,
                         </div>
                     ) : (
                         <div className="space-y-8">
+                            {/* Recommendation cards at the top */}
+                            <div className="mb-2">
+                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">為你準備</p>
+                                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                                    <div className="flex-none w-72">
+                                        <CourseCard
+                                            themeColor="#FF6B6B"
+                                            tag="花朵型"
+                                            title="花朵型小課程"
+                                            description="依女性週期身體狀態分型，14 天分階段任務，跟著週期長出新習慣"
+                                            buttonText="填寫問卷"
+                                            imageUrl="/images/course-flower.svg"
+                                            onButtonClick={() => {}}
+                                        />
+                                    </div>
+                                    <div className="flex-none w-72">
+                                        <CourseCard
+                                            themeColor="#7C3AED"
+                                            tag="睡眠處方"
+                                            title="睡眠處方小課程"
+                                            description="評估睡眠習慣，個性化睡眠優化方案，14 天改善睡眠品質"
+                                            buttonText="填寫問卷"
+                                            imageUrl="/images/course-sleep.svg"
+                                            imageScale={1.4}
+                                            onButtonClick={() => {}}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             {TEMPLATE_SECTIONS.map(section => {
                                 const items = grouped[section.id] || [];
                                 const showQuizPending = quizPendingShow[section.id] && section.quizPendingCopy;
