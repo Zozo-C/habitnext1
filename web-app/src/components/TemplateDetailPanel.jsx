@@ -214,7 +214,10 @@ const TemplateDetailPanel = ({
                 <button
                     onClick={() => onJoin?.(template)}
                     disabled={joining}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white py-3 rounded-xl text-sm font-bold transition-colors"
+                    style={{
+                        backgroundColor: category?.color || '#10b981',
+                    }}
+                    className="w-full text-white py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-50 active:scale-95"
                 >
                     {joining ? '加入中…' : '加入計畫'}
                 </button>
