@@ -136,7 +136,11 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
     const cardBody = (
         <div
             onClick={onClick}
-            className={`bg-white p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden shadow-sm hover:shadow-md ${borderCls} ${isPast && !isCompleted ? 'opacity-75' : ''}`}
+            className={`bg-white px-5 py-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden ${
+              isCompleted
+                ? 'border-gray-200 opacity-55 shadow-md'
+                : 'border-gray-200/50 shadow-lg hover:shadow-xl active:scale-95'
+            } ${isPast && !isCompleted ? 'opacity-75' : ''}`}
         >
 
             {/* Slice M — left emerald accent rail when completed (non-strikethrough
@@ -168,19 +172,14 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
             )}
 
             {/* Title & Status */}
-            <div className="flex justify-between items-start mb-2 gap-2">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex justify-between items-start gap-2 relative z-10">
+                <div className="flex items-center gap-3 min-w-0 flex-1 relative z-10">
                     <div className={`${config.bg} p-2 rounded-xl flex-shrink-0`}>
                         <IconRenderer category={task.category} size={18} className={config.type === 'emoji' ? 'text-2xl' : ''} />
                     </div>
                     <div className="min-w-0 flex-1">
-                        {task.identity && (
-                            <p className="text-[10px] font-medium text-gray-400 mb-0.5 leading-tight">
-                                {task.identity}
-                            </p>
-                        )}
                         {task.cue && (
-                            <p className="text-[11px] font-medium text-emerald-600 mb-0.5 flex items-center gap-1 leading-tight">
+                            <p className="text-[11px] font-medium text-emerald-600 flex items-center gap-1 leading-tight">
                                 <span>{task.cue}</span>
                                 <span className="text-gray-300">→</span>
                             </p>
@@ -210,13 +209,45 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                <div className="flex flex-col items-end gap-1 flex-shrink-0 relative z-10">
                     {(isQuant || isPeriod) ? (
-                        <span className={`text-xs font-bold px-2 py-1 rounded-lg whitespace-nowrap transition-colors ${isCompleted ? 'bg-yellow-100 text-yellow-700' : 'bg-emerald-50 text-emerald-600'}`}>
-                            {isCompleted ? (
-                                <span className="flex items-center gap-1">🎉 {displayStatus}</span>
-                            ) : displayStatus}
-                        </span>
+                        <div className="flex flex-col items-end gap-0.5">
+                            <span className={`text-xs font-bold px-2 py-1 rounded-lg whitespace-nowrap transition-colors ${isCompleted ? 'bg-yellow-100 text-yellow-700' : 'bg-emerald-50 text-emerald-600'}`}>
+                                {isCompleted ? (
+                                    <span className="flex items-center gap-1">🎉 {displayStatus}</span>
+                                ) : displayStatus}
+                            </span>
+                            {/* Quick Add buttons for Quant Tasks */}
+                            {isQuant && !isPeriod && !isLocked && (
+                                <div className="flex items-center gap-0.5">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleUpdate('add', -(task.stepValue || 1)); }}
+                                        className="w-5 h-5 flex items-center justify-center text-xs font-bold text-gray-500 hover:bg-gray-200 rounded border border-gray-300 transition-colors"
+                                    >
+                                        <Minus size={10} />
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={currentVal || 0}
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            const newVal = parseInt(e.target.value) || 0;
+                                            const diff = newVal - (currentVal || 0);
+                                            if (diff !== 0) {
+                                                handleUpdate('set', diff);
+                                            }
+                                        }}
+                                        className="w-10 h-5 text-xs text-center border border-gray-300 rounded px-1 focus:outline-none focus:border-emerald-400"
+                                    />
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleUpdate('add', (task.stepValue || 1)); }}
+                                        className="w-6 h-5 flex items-center justify-center text-xs font-bold text-emerald-600 hover:bg-emerald-100 rounded border border-emerald-300 transition-colors"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     ) : isChecklist ? (
                         // Checklist: X/Y badge + chevron to expand inline subtasks.
                         // No outer toggle — the bug was that toggling here flipped
@@ -279,7 +310,7 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                 disabled checkboxes so users can still see structure. */}
             {isChecklist && subtasksExpanded && visibleSubs.length > 0 && (
                 <div
-                    className="mt-3 pt-3 border-t border-gray-100 space-y-1.5"
+                    className="mt-2 pt-2 border-t border-gray-100 space-y-1"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {visibleSubs.map(sub => {
@@ -294,7 +325,7 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                                     if (isLocked) return;
                                     handleUpdate('toggle_subtask', null, sub.id, dateStr);
                                 }}
-                                className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors ${
+                                className={`w-full flex items-center gap-2.5 px-2 py-1 rounded-lg text-left transition-colors ${
                                     isLocked
                                         ? 'cursor-not-allowed'
                                         : 'hover:bg-gray-50 cursor-pointer'
@@ -317,15 +348,6 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                             </button>
                         );
                     })}
-                </div>
-            )}
-
-            {/* Quick Add for Quant Tasks — hidden on past/future to prevent edits */}
-            {isQuant && !isPeriod && !isLocked && (
-                <div className="flex justify-end gap-2 mt-2">
-                    <button onClick={(e) => { e.stopPropagation(); handleUpdate('add', -(task.stepValue || 1)); }} className="w-8 h-6 flex items-center justify-center text-xs font-bold text-gray-500 hover:bg-gray-100 rounded-full border border-gray-200 transition-colors"><Minus size={12} /></button>
-                    <button onClick={(e) => { e.stopPropagation(); handleUpdate('add', (task.stepValue || 1)); }} className="w-12 h-6 flex items-center justify-center text-xs font-bold text-emerald-600 hover:bg-emerald-50 rounded-full border border-emerald-100 transition-colors">+{task.stepValue || 1}</button>
-                    <span className="text-xs text-gray-400 pt-1.5">{task.unit}</span>
                 </div>
             )}
 
