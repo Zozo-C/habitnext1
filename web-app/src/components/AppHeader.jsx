@@ -30,23 +30,15 @@ const AppHeader = ({
     return (
         <div className={`sticky top-0 z-30 ${className || ''}`}>
             <div className="flex items-center justify-between px-4 py-3">
-                <button
-                    onClick={onOpenProfile || (() => onViewChange('daily'))}
-                    className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-                    aria-label="開啟個人資料"
-                >
-                    <Avatar user={user} size="w-8 h-8" />
-                    <span className="font-bold text-gray-800 text-sm md:text-base">{user?.nickname || user?.name || '訪客'}</span>
-                </button>
-
                 {currentView === 'daily' ? (
-                    // Date label hidden on mobile — the week strip below already
-                    // shows the current day. Reflects the actual selectedDate.
-                    <div className="hidden sm:flex items-center gap-2">
-                        <Calendar size={18} className="text-gray-600" />
-                        <span className="font-bold text-gray-800 text-sm md:text-base">{headerDateLabel}</span>
+                    // Daily view: show greeting + username on left
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-800 text-sm md:text-base">
+                            Hi! {user?.nickname || user?.name || '訪客'}
+                        </span>
                     </div>
                 ) : (
+                    // Other views: show view title on left
                     <span className="font-bold text-emerald-600">
                         {currentView === 'manage' ? '計畫'
                             : currentView === 'dashboard_detail' ? '洞察報告'
@@ -56,17 +48,33 @@ const AppHeader = ({
                     </span>
                 )}
 
-                <div className="flex gap-2">
-                    {(currentView !== 'daily' && currentView !== 'dashboard_detail') && (
-                        <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors">
+                {/* Right side: calendar icon + avatar (always visible) */}
+                <div className="flex items-center gap-3">
+                    {currentView === 'daily' && (
+                        <button
+                            onClick={() => onViewChange('dashboard_detail')}
+                            className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors"
+                            aria-label="打開日曆"
+                        >
                             <Calendar size={20} />
                         </button>
                     )}
-                    {currentView === 'dashboard_detail' && (
-                        <button onClick={() => onViewChange('daily')} className="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
-                            <X size={20} />
+                    {currentView !== 'daily' && (
+                        <button
+                            onClick={() => onViewChange('daily')}
+                            className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors"
+                            aria-label="返回今日"
+                        >
+                            <Calendar size={20} />
                         </button>
                     )}
+                    <button
+                        onClick={onOpenProfile}
+                        className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+                        aria-label="開啟個人資料"
+                    >
+                        <Avatar user={user} size="w-8 h-8" />
+                    </button>
                 </div>
             </div>
 
