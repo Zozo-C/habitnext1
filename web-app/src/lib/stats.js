@@ -3,7 +3,7 @@
 // No Prisma, no I/O — takes plain rows, returns a stats bundle.
 // See spec: docs/superpowers/specs/2026-05-21-slice-i-stats-streak-design.md
 
-const HEATMAP_DAYS = 84;       // 12 weeks
+const HEATMAP_DAYS = 28;       // 4 weeks
 const WINDOW_30 = 30;
 const WINDOW_7 = 7;
 const TOP_TASK_STREAKS = 5;

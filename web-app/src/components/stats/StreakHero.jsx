@@ -9,7 +9,7 @@ const StreakHero = ({ overall }) => {
     const longest = longestStreak || 0;
 
     return (
-        <div className="bg-gradient-to-br from-orange-50 to-red-50 border border-orange-100 rounded-2xl p-6 text-center">
+        <div className="bg-white border border-gray-200/50 rounded-3xl px-5 py-6 text-center shadow-lg">
             <div className="flex items-center justify-center gap-2 text-orange-500 mb-2">
                 <Flame size={28} />
                 <span className="text-sm font-medium tracking-wide uppercase">Current Streak</span>

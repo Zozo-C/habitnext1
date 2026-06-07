@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Calendar, X } from 'lucide-react';
+import { Calendar, X, List } from 'lucide-react';
 import Avatar from './Avatar';
 import WeekStrip from './WeekStrip';
 
@@ -30,8 +30,8 @@ const AppHeader = ({
     return (
         <div className={`sticky top-0 z-30 ${className || ''}`}>
             <div className="flex items-center justify-between px-4 py-3">
-                {currentView === 'daily' ? (
-                    // Daily view: show greeting + username on left
+                {(currentView === 'daily' || currentView === 'dashboard_detail') ? (
+                    // Daily & Dashboard Detail view: show greeting + username on left
                     <div className="flex items-center gap-2">
                         <span className="font-bold text-gray-800 text-sm md:text-base">
                             Hi! {user?.nickname || user?.name || '訪客'}
@@ -41,14 +41,13 @@ const AppHeader = ({
                     // Other views: show view title on left
                     <span className="font-bold text-emerald-600">
                         {currentView === 'manage' ? '計畫'
-                            : currentView === 'dashboard_detail' ? '洞察報告'
                             : currentView === 'stats' ? '統計'
                             : currentView === 'journey' ? '旅程'
                             : '成就中心'}
                     </span>
                 )}
 
-                {/* Right side: calendar icon + avatar (always visible) */}
+                {/* Right side: action icon + avatar */}
                 <div className="flex items-center gap-3">
                     {currentView === 'daily' && (
                         <button
@@ -59,13 +58,13 @@ const AppHeader = ({
                             <Calendar size={20} />
                         </button>
                     )}
-                    {currentView !== 'daily' && (
+                    {currentView === 'dashboard_detail' && (
                         <button
                             onClick={() => onViewChange('daily')}
                             className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center hover:bg-emerald-100 transition-colors"
-                            aria-label="返回今日"
+                            aria-label="回到今日任務"
                         >
-                            <Calendar size={20} />
+                            <List size={20} />
                         </button>
                     )}
                     <button

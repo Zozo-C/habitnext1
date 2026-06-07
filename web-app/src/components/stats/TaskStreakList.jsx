@@ -7,7 +7,7 @@ const TaskStreakList = ({ topTaskStreaks }) => {
     if (!topTaskStreaks || topTaskStreaks.length === 0) return null;
 
     return (
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+        <div className="bg-white border border-gray-200/50 rounded-3xl px-5 py-4 shadow-lg">
             <div className="flex items-center gap-2 mb-3">
                 <Trophy size={18} className="text-amber-500" />
                 <p className="text-sm font-medium text-gray-700">你的金牌 Habit</p>
