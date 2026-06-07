@@ -96,7 +96,7 @@ const SwipeReveal = ({ children, rightActions, onSwipeRight, rightHintIcon, thre
     const hintOpacity = translateX > 0 ? Math.min(translateX / 40, 1) : 0;
 
     return (
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden rounded-3xl">
             {/* Right-swipe hint slot — sits on the LEFT side, peeks out when
                 the card shifts right. Pointer-events-none so it never blocks
                 tap targets on the card. */}

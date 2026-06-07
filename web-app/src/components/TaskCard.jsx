@@ -221,7 +221,11 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                             {isQuant && !isPeriod && !isLocked && (
                                 <div className="flex items-center gap-0.5">
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); handleUpdate('add', -(task.stepValue || 1)); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            handleUpdate('add', -(task.stepValue || 1));
+                                        }}
                                         className="w-5 h-5 flex items-center justify-center text-xs font-bold text-gray-500 hover:bg-gray-200 rounded border border-gray-300 transition-colors"
                                     >
                                         <Minus size={10} />
@@ -231,6 +235,7 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                                         value={currentVal || 0}
                                         onChange={(e) => {
                                             e.stopPropagation();
+                                            e.preventDefault();
                                             const newVal = parseInt(e.target.value) || 0;
                                             const diff = newVal - (currentVal || 0);
                                             if (diff !== 0) {
@@ -240,7 +245,11 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
                                         className="w-10 h-5 text-xs text-center border border-gray-300 rounded px-1 focus:outline-none focus:border-emerald-400"
                                     />
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); handleUpdate('add', (task.stepValue || 1)); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            handleUpdate('add', (task.stepValue || 1));
+                                        }}
                                         className="w-6 h-5 flex items-center justify-center text-xs font-bold text-emerald-600 hover:bg-emerald-100 rounded border border-emerald-300 transition-colors"
                                     >
                                         +
@@ -354,9 +363,13 @@ const TaskCard = ({ task, onClick, onUpdate = () => { }, viewingDate, onAfterAct
             {/* Quick Add for Period Tasks — period tasks aren't date-locked since
                 the window concept (this week / this month) is what matters. */}
             {isPeriod && (task.recurrence?.dailyLimit === false || !isCompletedToday(task)) && (
-                <div className="flex justify-end mt-2">
+                <div className="flex justify-end mt-2" onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
                     <button
-                        onClick={(e) => { e.stopPropagation(); handleUpdate('period_add'); }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleUpdate('period_add');
+                        }}
                         className="text-xs flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-bold hover:bg-emerald-100 transition-colors"
                     >
                         <Plus size={12} /> 紀錄一次
