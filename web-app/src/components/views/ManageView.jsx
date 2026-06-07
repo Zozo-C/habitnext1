@@ -25,7 +25,7 @@ const ManageView = ({
       <h2 className="text-lg font-bold text-gray-800 mb-6">探索</h2>
 
       {/* Explore Section */}
-      <div className="mb-6 grid grid-cols-2 gap-3">
+      <div className="mb-6 grid grid-cols-2 gap-2">
         {/* Course Plans Card */}
         <button
           onClick={onOpenCourses}
@@ -91,7 +91,7 @@ const ManageView = ({
         {!loading && activeTasks.length > 0 && (
           <>
             <h3 className="text-lg font-bold text-gray-800 px-4 mb-4">我的任務總覽</h3>
-            <div className="grid grid-cols-2 gap-3 px-4">
+            <div className="grid grid-cols-2 gap-2 px-4">
               {activeTasks.map(task => (
                 <HabitCalendarCard
                   key={task.id}
