@@ -24,7 +24,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
   }
 
   // SVG 圓形進度計算
-  const radius = 22;
+  const radius = 14;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - Math.max(0, Math.min(1, progress)));
 
@@ -36,11 +36,11 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         transition={{ duration: 0.3 }}
         className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
-        <svg width="40" height="40" viewBox="0 0 40 40">
+        <svg width="30" height="30" viewBox="0 0 30 30">
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="15"
+            cy="15"
+            r="13"
             fill="#e5e7eb"
           />
         </svg>
@@ -57,21 +57,21 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
         {/* 中間淺灰色圓 + 日期 */}
-        <svg width="40" height="40" viewBox="0 0 40 40">
+        <svg width="30" height="30" viewBox="0 0 30 30">
           {/* 淺灰色實心圓 */}
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="15"
+            cy="15"
+            r="13"
             fill="#e5e7eb"
           />
 
           {/* 淺灰色日期數字 */}
           <text
-            x="20"
-            y="27"
+            x="15"
+            y="20"
             textAnchor="middle"
-            fontSize="16"
+            fontSize="12"
             fontWeight="700"
             fill="#d1d5db"
             fontFamily="system-ui, -apple-system, sans-serif"
@@ -91,20 +91,20 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         transition={{ duration: 0.3 }}
         className="flex items-center justify-center active:scale-95 transition-all cursor-pointer"
       >
-        <svg width="40" height="40" viewBox="0 0 40 40">
+        <svg width="30" height="30" viewBox="0 0 30 30">
           {/* 綠色實心圓 */}
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="15"
+            cy="15"
+            r="13"
             fill="#4CAF50"
           />
           {/* 白色日期數字 */}
           <text
-            x="20"
-            y="27"
+            x="15"
+            y="20"
             textAnchor="middle"
-            fontSize="16"
+            fontSize="12"
             fontWeight="700"
             fill="white"
             fontFamily="system-ui, -apple-system, sans-serif"
@@ -126,13 +126,13 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
       transition={{ duration: 0.3 }}
       className="flex flex-col items-center justify-center active:scale-95 transition-all cursor-pointer"
     >
-      <div className="relative w-[40px] h-[40px]">
+      <div className="relative w-[30px] h-[30px]">
         {/* 背景淺灰色圓 */}
-        <svg width="40" height="40" viewBox="0 0 40 40" className="absolute inset-0">
+        <svg width="30" height="30" viewBox="0 0 30 30" className="absolute inset-0">
           <circle
-            cx="20"
-            cy="20"
-            r="18"
+            cx="15"
+            cy="15"
+            r="13"
             fill="#e5e7eb"
           />
         </svg>
@@ -146,7 +146,7 @@ const HabitDay: React.FC<HabitDayProps> = ({ status, progress = 0, dateStr }) =>
         />
 
         {/* 日期文字 */}
-        <span className="absolute inset-0 flex items-center justify-center text-[16px] font-bold text-[#374151]">
+        <span className="absolute inset-0 flex items-center justify-center text-[12px] font-bold text-[#374151]">
           {displayText}
         </span>
       </div>
